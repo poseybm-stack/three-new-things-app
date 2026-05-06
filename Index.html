@@ -1,0 +1,1156 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8"/>
+<meta name="color-scheme" content="light only"/>
+<meta name="viewport" content="width=device-width,initial-scale=1,maximum-scale=1"/>
+<title>Three New Things</title>
+<link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,700;1,400&family=IBM+Plex+Mono:wght@300;400&display=swap" rel="stylesheet"/>
+<style>
+*{box-sizing:border-box;margin:0;padding:0}
+html{
+  background:#e8e2d9;
+  font-size:16px;
+  color-scheme:light;
+  -webkit-text-size-adjust:100%;
+}
+body{
+  background:#f7f3ec;
+  color:#2a2520;
+  font-family:Georgia,serif;
+  max-width:540px;
+  margin:0 auto;
+  min-height:100vh;
+  border-left:1px solid #ddd6c8;
+  border-right:1px solid #ddd6c8;
+  -webkit-font-smoothing:antialiased;
+}
+
+/* MASTHEAD */
+.masthead{padding:22px 26px 0;text-align:center;background:#f7f3ec;border-bottom:1px solid #ddd6c8}
+.eyebrow{font-family:'IBM Plex Mono',monospace;font-size:8.5px;letter-spacing:.32em;color:#a89e8e;text-transform:uppercase;margin-bottom:7px}
+.logo{font-family:'Playfair Display',Georgia,serif;font-size:clamp(34px,10vw,52px);font-weight:700;line-height:.92;color:#2a2520}
+.double-rule{border:none;border-top:3px double #2a2520;margin:11px 0 0}
+.dateline{display:flex;justify-content:space-between;align-items:center;padding:5px 0 9px;font-family:'IBM Plex Mono',monospace;font-size:8.5px;letter-spacing:.15em;color:#a89e8e;text-transform:uppercase}
+.life-dots{display:flex;gap:5px;align-items:center}
+.dot{width:7px;height:7px;border-radius:50%;background:#2a2520;transition:all .4s ease}
+.dot.lost{background:transparent;border:1px solid #c0b8ac;transform:scale(.75)}
+
+/* PAGES */
+.page{display:none;padding:0 26px 64px;background:#f7f3ec}
+.page.active{display:block}
+
+/* START */
+.hero{padding:28px 0 22px;border-bottom:1px solid #ddd6c8;margin-bottom:26px}
+.kicker{font-family:'IBM Plex Mono',monospace;font-size:8.5px;letter-spacing:.32em;color:#9e3020;text-transform:uppercase;margin-bottom:9px}
+.hero-head{font-family:'Playfair Display',Georgia,serif;font-size:clamp(21px,5.5vw,30px);font-weight:700;line-height:1.2;color:#2a2520;margin-bottom:12px}
+.hero-body{font-size:14px;line-height:1.8;color:#6b6058;font-style:italic}
+
+/* TOPIC GRID */
+.topic-label{font-family:'IBM Plex Mono',monospace;font-size:8.5px;letter-spacing:.28em;color:#a89e8e;text-transform:uppercase;margin-bottom:13px}
+.topic-grid{display:grid;grid-template-columns:1fr 1fr 1fr;gap:7px;margin-bottom:26px}
+.topic-btn{
+  padding:10px 6px;border:1px solid #ddd6c8;background:#f7f3ec;
+  cursor:pointer;text-align:center;transition:all .15s;
+  -webkit-tap-highlight-color:transparent;
+}
+.topic-btn.sel{background:#2a2520;border-color:#2a2520}
+.topic-icon{font-size:13px;margin-bottom:3px;color:#a89e8e;display:block}
+.topic-btn.sel .topic-icon{color:#f7f3ec}
+.topic-name{font-family:'IBM Plex Mono',monospace;font-size:8px;letter-spacing:.1em;color:#6b6058;text-transform:uppercase;line-height:1.2;display:block}
+.topic-btn.sel .topic-name{color:#f7f3ec}
+
+/* BUTTON */
+.btn-main{
+  width:100%;background:#2a2520;color:#f7f3ec;border:none;
+  font-family:'Playfair Display',Georgia,serif;font-size:17px;font-style:italic;
+  padding:15px 24px;cursor:pointer;letter-spacing:.02em;transition:background .15s;
+}
+.btn-main:disabled{background:#c0b8ac;cursor:not-allowed}
+.btn-main:active:not(:disabled){transform:scale(.99)}
+
+/* ERROR */
+.err{display:none;margin-bottom:14px;padding:12px 14px;border-left:2px solid #9e3020;background:rgba(158,48,32,.05);font-family:'IBM Plex Mono',monospace;font-size:11px;color:#9e3020;line-height:1.6}
+.err.show{display:block}
+
+/* LOADING */
+.loading-wrap{display:flex;flex-direction:column;align-items:center;justify-content:center;min-height:60vh;gap:18px;background:#f7f3ec}
+.loading-title{font-family:'Playfair Display',Georgia,serif;font-size:20px;font-style:italic;color:#6b6058}
+.dots-wrap{display:flex;gap:6px}
+.ldot{width:5px;height:5px;border-radius:50%;background:#a89e8e;animation:pulse 1.2s ease-in-out infinite}
+@keyframes pulse{0%,80%,100%{opacity:.2;transform:scale(.8)}40%{opacity:1;transform:scale(1)}}
+.loading-rule{width:48px;height:1px;background:#ddd6c8}
+
+/* QUESTION */
+.q-meta{display:flex;justify-content:space-between;align-items:baseline;padding:13px 0 11px;border-bottom:1px solid #ddd6c8;margin-bottom:18px}
+.q-counter{font-family:'IBM Plex Mono',monospace;font-size:9px;letter-spacing:.22em;color:#a89e8e;text-transform:uppercase}
+.q-score{font-family:'IBM Plex Mono',monospace;font-size:9px;letter-spacing:.15em;color:#a89e8e}
+.q-score b{font-family:'Playfair Display',Georgia,serif;font-weight:600;color:#2a2520;font-style:normal}
+.miss-banner{display:none;margin:0 -26px 14px;padding:8px 26px;background:rgba(158,48,32,.06);border-top:1px solid rgba(158,48,32,.15);border-bottom:1px solid rgba(158,48,32,.15);font-family:'IBM Plex Mono',monospace;font-size:9px;letter-spacing:.18em;color:#9e3020;text-transform:uppercase;text-align:center}
+.miss-banner.show{display:block}
+.q-topic-tag{font-family:'IBM Plex Mono',monospace;font-size:8.5px;letter-spacing:.22em;color:#a89e8e;text-transform:uppercase;margin-bottom:9px}
+.q-text{font-family:'Playfair Display',Georgia,serif;font-size:clamp(18px,5vw,23px);font-weight:700;line-height:1.35;color:#2a2520;margin-bottom:22px;padding-bottom:18px;border-bottom:1px solid #ddd6c8}
+
+/* ANSWERS */
+.answer{display:flex;align-items:flex-start;gap:14px;padding:13px 0;border-bottom:1px solid #ddd6c8;cursor:pointer;-webkit-tap-highlight-color:transparent;transition:background .12s}
+.answer:first-of-type{border-top:1px solid #ddd6c8}
+.answer:active:not(.locked){background:rgba(0,0,0,.03)}
+.answer.locked{cursor:default}
+.answer-bullet{font-family:'IBM Plex Mono',monospace;font-size:10px;color:#a89e8e;flex-shrink:0;margin-top:3px;width:18px;transition:color .3s}
+.answer-text{font-size:15px;line-height:1.55;color:#2a2520;transition:color .3s}
+.answer.correct .answer-bullet,.answer.correct .answer-text{color:#2a6040}
+.answer.correct .answer-text{font-weight:600}
+.answer.wrong .answer-bullet,.answer.wrong .answer-text{color:#9e3020}
+.answer.dim .answer-bullet,.answer.dim .answer-text{color:#c0b8ac}
+
+/* Handwriting annotation wrapper */
+.answer{position:relative}
+.annotation-svg{
+  position:absolute;
+  top:0;left:0;right:0;bottom:0;
+  width:100%;height:100%;
+  pointer-events:none;
+  overflow:visible;
+}
+/* Circle stroke drawn on */
+.circle-path{
+  fill:none;
+  stroke:#2a6040;
+  stroke-width:2.5;
+  stroke-linecap:round;
+  stroke-linejoin:round;
+  stroke-dasharray:999;
+  stroke-dashoffset:999;
+}
+.circle-path.draw{
+  animation: drawStroke 0.55s cubic-bezier(0.4,0,0.2,1) forwards;
+  animation-delay:0.05s;
+}
+/* Strike slash drawn on */
+.strike-path{
+  fill:none;
+  stroke:#9e3020;
+  stroke-width:2.8;
+  stroke-linecap:round;
+  stroke-dasharray:999;
+  stroke-dashoffset:999;
+}
+.strike-path.draw{
+  animation: drawStroke 0.35s cubic-bezier(0.4,0,0.2,1) forwards;
+  animation-delay:0.05s;
+}
+@keyframes drawStroke{
+  to{stroke-dashoffset:0;}
+}
+
+/* FEEDBACK */
+.feedback{display:none;margin-top:20px;padding:13px 0;border-top:1px solid #ddd6c8;border-bottom:1px solid #ddd6c8}
+.feedback.show{display:block}
+.fb-kicker{font-family:'IBM Plex Mono',monospace;font-size:8.5px;letter-spacing:.3em;text-transform:uppercase;margin-bottom:5px}
+.fb-kicker.ok{color:#2a6040}.fb-kicker.bad{color:#9e3020}
+.fb-text{font-size:14px;line-height:1.7;color:#6b6058;font-style:italic}
+.next-hint{display:none;margin-top:18px;font-family:'IBM Plex Mono',monospace;font-size:8.5px;letter-spacing:.22em;color:#a89e8e;text-transform:uppercase;text-align:center;padding:10px 0;cursor:pointer;animation:fadein .8s ease both}
+@keyframes fadein{from{opacity:0}to{opacity:1}}
+
+/* ── CARD SWIPE TRANSITIONS ── */
+#pg-question {
+  overflow: hidden;
+  padding: 0 !important;
+}
+
+/* The viewport window — clips cards */
+#card-viewport {
+  position: relative;
+  overflow: hidden;
+  min-height: calc(100vh - 90px);
+}
+
+/* Each question card */
+.q-card {
+  padding: 0 26px 80px;
+  background: #f7f3ec;
+  width: 100%;
+  will-change: transform;
+}
+
+/* Flash overlay */
+#answer-flash {
+  position: fixed;
+  inset: 0;
+  pointer-events: none;
+  opacity: 0;
+  z-index: 100;
+}
+#answer-flash.flash-correct { background: rgba(42,96,64,0.13); }
+#answer-flash.flash-wrong   { background: rgba(158,48,32,0.13); }
+
+@keyframes flashIn {
+  0%   { opacity: 0; }
+  30%  { opacity: 1; }
+  100% { opacity: 0; }
+}
+.do-flash { animation: flashIn 0.4s ease forwards; }
+
+/* Slide current card UP and out */
+@keyframes exitUp {
+  0%   { transform: translateY(0);      opacity: 1; }
+  100% { transform: translateY(-105%);  opacity: 0; }
+}
+/* Slide next card UP from below */
+@keyframes enterFromBelow {
+  0%   { transform: translateY(105%);  opacity: 1; }
+  100% { transform: translateY(0);     opacity: 1; }
+}
+.card-exit    { animation: exitUp         0.42s cubic-bezier(0.4, 0, 0.2, 1) forwards; }
+.card-enter   { animation: enterFromBelow 0.42s cubic-bezier(0.4, 0, 0.2, 1) forwards; }
+
+/* RESULTS */
+.res-top{padding:26px 0 18px;border-bottom:3px double #2a2520;margin-bottom:26px;text-align:center}
+.res-edition{font-family:'IBM Plex Mono',monospace;font-size:8.5px;letter-spacing:.3em;color:#a89e8e;text-transform:uppercase;margin-bottom:7px}
+.res-head{font-family:'Playfair Display',Georgia,serif;font-size:clamp(25px,7vw,40px);font-weight:700;line-height:1.1;color:#2a2520;margin-bottom:9px}
+.res-sub{font-size:14px;font-style:italic;color:#6b6058}
+.stats{display:grid;grid-template-columns:1fr 1px 1fr 1px 1fr;background:#ddd6c8;gap:1px;border:1px solid #ddd6c8;margin-bottom:30px}
+.stat{background:#f7f3ec;padding:16px 8px;text-align:center}
+.stat-n{font-family:'Playfair Display',Georgia,serif;font-size:28px;font-weight:700;color:#2a2520;display:block}
+.stat-l{font-family:'IBM Plex Mono',monospace;font-size:8px;letter-spacing:.22em;color:#a89e8e;text-transform:uppercase;margin-top:3px;display:block}
+.divider-row{display:flex;align-items:center;gap:12px;margin-bottom:22px}
+.divider-line{flex:1;height:1px;background:#2a2520}
+.divider-text{font-family:'Playfair Display',Georgia,serif;font-size:14px;font-weight:700;font-style:italic;color:#2a2520;white-space:nowrap}
+.missed-art{margin-bottom:26px;padding-bottom:26px;border-bottom:1px solid #ddd6c8}
+.missed-art:last-child{border-bottom:none}
+.missed-kicker{font-family:'IBM Plex Mono',monospace;font-size:8.5px;letter-spacing:.25em;color:#9e3020;text-transform:uppercase;margin-bottom:5px}
+.missed-q{font-family:'Playfair Display',Georgia,serif;font-size:16px;font-weight:600;line-height:1.35;color:#2a2520;margin-bottom:4px}
+.missed-ans{font-family:'IBM Plex Mono',monospace;font-size:9.5px;letter-spacing:.1em;color:#2a6040;margin-bottom:11px}
+.missed-exp{font-size:13px;line-height:1.8;color:#6b6058}
+.exp-loading{font-family:'IBM Plex Mono',monospace;font-size:9px;letter-spacing:.18em;color:#a89e8e;text-transform:uppercase;animation:pulse 1.5s infinite}
+.res-actions{padding-top:26px;border-top:1px solid #ddd6c8}
+
+/* ── TUTORIAL OVERLAY ── */
+#tutorial-overlay {
+  position: fixed;
+  inset: 0;
+  z-index: 200;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: flex-end;
+  background: rgba(42,37,32,0.72);
+  backdrop-filter: blur(2px);
+  -webkit-backdrop-filter: blur(2px);
+  animation: fadeIn 0.3s ease both;
+}
+#tutorial-card {
+  background: #f7f3ec;
+  width: 100%;
+  max-width: 540px;
+  padding: 36px 28px 48px;
+  border-radius: 0;
+  animation: slideUpCard 0.4s cubic-bezier(0.34, 1.3, 0.64, 1) both;
+}
+@keyframes slideUpCard {
+  from { transform: translateY(100%); }
+  to   { transform: translateY(0); }
+}
+.tut-rule { width: 32px; height: 3px; background: #ddd6c8; margin: 0 auto 24px; border-radius: 2px; }
+.tut-title {
+  font-family: 'Playfair Display', Georgia, serif;
+  font-size: 26px;
+  font-weight: 700;
+  color: #2a2520;
+  text-align: center;
+  margin-bottom: 28px;
+  line-height: 1.2;
+}
+.tut-steps { display: flex; flex-direction: column; gap: 18px; margin-bottom: 32px; }
+.tut-step { display: flex; align-items: flex-start; gap: 16px; }
+.tut-icon {
+  width: 36px; height: 36px;
+  flex-shrink: 0;
+  border: 1.5px solid #ddd6c8;
+  display: flex; align-items: center; justify-content: center;
+  font-size: 16px;
+  color: #6b6058;
+}
+.tut-step-text { padding-top: 6px; }
+.tut-step-head {
+  font-family: 'Playfair Display', Georgia, serif;
+  font-size: 15px;
+  font-weight: 700;
+  color: #2a2520;
+  margin-bottom: 2px;
+}
+.tut-step-body {
+  font-size: 13px;
+  line-height: 1.6;
+  color: #6b6058;
+}
+#tut-btn {
+  width: 100%;
+  background: #2a2520;
+  color: #f7f3ec;
+  border: none;
+  font-family: 'Playfair Display', Georgia, serif;
+  font-size: 17px;
+  font-style: italic;
+  padding: 15px 24px;
+  cursor: pointer;
+}
+</style>
+</head>
+<body>
+
+<!-- MASTHEAD -->
+<header class="masthead">
+  <div class="eyebrow" id="mast-eyebrow">Daily Edition · General Knowledge</div>
+  <div class="logo">Three New Things</div>
+  <hr class="double-rule"/>
+  <div class="dateline">
+    <span id="mast-date"></span>
+    <div class="life-dots" id="life-dots">
+      <div class="dot" id="d0"></div>
+      <div class="dot" id="d1"></div>
+      <div class="dot" id="d2"></div>
+    </div>
+    
+  </div>
+</header>
+
+<!-- START -->
+<div class="page active" id="pg-start">
+  <div class="hero">
+    <div class="kicker">How It Works</div>
+    <div class="hero-head">Answer questions until three go wrong. Then learn something.</div>
+    <div class="hero-body">Questions keep coming — no limit, no clock. Miss three and the session closes with a short read on everything you didn't know.</div>
+  </div>
+  <div class="topic-label">Choose a Topic</div>
+  <div class="topic-grid" id="topic-grid"></div>
+  <div class="err" id="start-err"></div>
+  <button class="btn-main" id="btn-start">Start</button>
+</div>
+
+<!-- LOADING -->
+<div class="page" id="pg-loading">
+  <div class="loading-wrap">
+    <div class="loading-rule"></div>
+    <div class="loading-title">Setting the type…</div>
+    <div class="dots-wrap">
+      <div class="ldot" style="animation-delay:0s"></div>
+      <div class="ldot" style="animation-delay:.2s"></div>
+      <div class="ldot" style="animation-delay:.4s"></div>
+    </div>
+    <div class="loading-rule"></div>
+  </div>
+</div>
+
+<!-- QUESTION -->
+<div class="page" id="pg-question">
+  <div id="card-viewport">
+    <div id="current-card" class="q-card">
+      <div class="q-meta">
+        <span class="q-counter" id="q-counter">Question 1</span>
+    
+      </div>
+      <div class="miss-banner" id="miss-banner"></div>
+      <div class="q-topic-tag" id="q-topic-tag"></div>
+      <div class="q-text" id="q-text"></div>
+      <div id="answers-list"></div>
+      <div class="feedback" id="feedback">
+        <div class="fb-kicker" id="fb-kicker"></div>
+        <div class="fb-text" id="fb-text"></div>
+      </div>
+    </div>
+  </div>
+</div>
+<div id="answer-flash"></div>
+
+<!-- RESULTS -->
+<div class="page" id="pg-results">
+  <!-- Header -->
+  <div style="padding:28px 0 20px;text-align:center;border-bottom:1px solid #ddd6c8;margin-bottom:24px;">
+    <div style="font-family:'IBM Plex Mono',monospace;font-size:8.5px;letter-spacing:.32em;color:#a89e8e;text-transform:uppercase;margin-bottom:10px;">Session Complete</div>
+    <div style="font-family:'Playfair Display',Georgia,serif;font-size:clamp(32px,9vw,52px);font-weight:700;line-height:.95;color:#2a2520;margin-bottom:10px;" id="res-head">—</div>
+    <div style="font-family:'IBM Plex Mono',monospace;font-size:11px;color:#a89e8e;letter-spacing:.08em;" id="res-sub"></div>
+  </div>
+
+  <!-- Stats row — inline, no boxes -->
+  <div style="display:flex;justify-content:space-around;padding:0 0 22px;border-bottom:1px solid #ddd6c8;margin-bottom:28px;">
+    <div style="text-align:center;">
+      <div style="font-family:'Playfair Display',Georgia,serif;font-size:36px;font-weight:700;color:#2a2520;line-height:1;" id="res-correct">0</div>
+      <div style="font-family:'IBM Plex Mono',monospace;font-size:8px;letter-spacing:.22em;color:#a89e8e;text-transform:uppercase;margin-top:4px;">Correct</div>
+    </div>
+    <div style="width:1px;background:#ddd6c8;margin:4px 0;"></div>
+    <div style="text-align:center;">
+      <div style="font-family:'Playfair Display',Georgia,serif;font-size:36px;font-weight:700;color:#2a2520;line-height:1;" id="res-streak">0</div>
+      <div style="font-family:'IBM Plex Mono',monospace;font-size:8px;letter-spacing:.22em;color:#a89e8e;text-transform:uppercase;margin-top:4px;">Streak</div>
+    </div>
+    <div style="width:1px;background:#ddd6c8;margin:4px 0;"></div>
+    <div style="text-align:center;">
+      <div style="font-family:'Playfair Display',Georgia,serif;font-size:36px;font-weight:700;color:#2a2520;line-height:1;" id="res-pct">0%</div>
+      <div style="font-family:'IBM Plex Mono',monospace;font-size:8px;letter-spacing:.22em;color:#a89e8e;text-transform:uppercase;margin-top:4px;">Accuracy</div>
+    </div>
+  </div>
+
+  <!-- Three Things header -->
+  <div style="font-family:'IBM Plex Mono',monospace;font-size:8.5px;letter-spacing:.32em;color:#a89e8e;text-transform:uppercase;margin-bottom:20px;">Three Things to Learn</div>
+
+  <div id="missed-list"></div>
+
+  <div style="padding-top:28px;border-top:1px solid #ddd6c8;margin-top:4px;">
+    <button class="btn-main" id="btn-again">Play Again →</button>
+  </div>
+</div>
+
+<script>
+// ── CONFIG ──
+const TOPICS = [
+  {id:"mixed",      label:"Mixed",       icon:"◈"},
+  {id:"history",    label:"History",     icon:"⌛"},
+  {id:"science",    label:"Science",     icon:"⚗"},
+  {id:"geography",  label:"Geography",   icon:"◉"},
+  {id:"literature", label:"Literature",  icon:"✦"},
+  {id:"music",      label:"Music",       icon:"♩"},
+  {id:"film & tv",  label:"Film & TV",   icon:"▣"},
+  {id:"sports",     label:"Sports",      icon:"◎"},
+  {id:"food",       label:"Food & Drink",icon:"❧"},
+  {id:"nature",     label:"Nature",      icon:"❋"},
+  {id:"art",        label:"Art",         icon:"◇"},
+  {id:"technology", label:"Technology",  icon:"⌘"},
+];
+const BULLETS = ["A.","B.","C.","D."];
+const LIVES = 3;
+const API_KEY = "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";
+
+// ── STATE ──
+let selectedTopic = "mixed";
+let queue = [], recent = [], fetching = false;
+let qNum = 0, score = 0, streak = 0, bestStreak = 0, correct = 0, missed = 0;
+let missedList = [];
+let currentQ = null, answered = false, pendingNext = false;
+
+// ── HELPERS ──
+const $ = id => document.getElementById(id);
+const today = new Date().toLocaleDateString("en-US",{month:"short",day:"numeric",year:"numeric"});
+$("mast-date").textContent = today;
+
+function showPage(id) {
+  document.querySelectorAll(".page").forEach(p => p.classList.remove("active"));
+  $(id).classList.add("active");
+  window.scrollTo({top:0,behavior:"smooth"});
+}
+
+function updateLives() {
+  for (let i=0;i<LIVES;i++) {
+    const d = $("d"+i);
+    const lost = i >= LIVES - missed;
+    d.className = "dot" + (lost ? " lost" : "");
+  }
+}
+
+function updateScore() {
+  
+}
+
+function showErr(id, msg) {
+  const el = $(id);
+  el.textContent = msg;
+  el.classList.add("show");
+}
+
+// ── TOPIC GRID ──
+const grid = $("topic-grid");
+TOPICS.forEach(t => {
+  const btn = document.createElement("div");
+  btn.className = "topic-btn" + (t.id === "mixed" ? " sel" : "");
+  btn.dataset.id = t.id;
+  btn.innerHTML = `<span class="topic-icon">${t.icon}</span><span class="topic-name">${t.label}</span>`;
+  btn.onclick = () => {
+    document.querySelectorAll(".topic-btn").forEach(b => b.classList.remove("sel"));
+    btn.classList.add("sel");
+    selectedTopic = t.id;
+  };
+  grid.appendChild(btn);
+});
+
+// ── API ──
+function withTimeout(promise, ms) {
+  return Promise.race([
+    promise,
+    new Promise((_, reject) => setTimeout(() => reject(new Error("Timeout")), ms))
+  ]);
+}
+
+async function callClaude(prompt, maxTokens=1400) {
+  const body = JSON.stringify({
+    model: "claude-sonnet-4-20250514",
+    max_tokens: maxTokens,
+    messages: [{role:"user",content:prompt}],
+  });
+
+  // Direct call with 8s timeout
+  try {
+    const res = await withTimeout(fetch("https://api.anthropic.com/v1/messages", {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+        "x-api-key": API_KEY,
+        "anthropic-version": "2023-06-01",
+        "anthropic-dangerous-direct-browser-access": "true",
+      },
+      body,
+    }), 8000);
+    if (!res.ok) throw new Error(`HTTP ${res.status}`);
+    const data = await res.json();
+    const text = data.content?.find(b=>b.type==="text")?.text;
+    if (!text) throw new Error("No text");
+    return text;
+  } catch(e) {
+    
+  }
+
+  // CORS proxy with 8s timeout
+  try {
+    const res = await withTimeout(fetch("https://corsproxy.io/?" + encodeURIComponent("https://api.anthropic.com/v1/messages"), {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+        "x-api-key": API_KEY,
+        "anthropic-version": "2023-06-01",
+      },
+      body,
+    }), 8000);
+    if (!res.ok) throw new Error(`HTTP ${res.status}`);
+    const data = await res.json();
+    const text = data.content?.find(b=>b.type==="text")?.text;
+    if (!text) throw new Error("No text");
+    return text;
+  } catch(e) {
+    
+    throw e;
+  }
+}
+
+const QUESTION_BANK = [
+  // HISTORY
+  {question:"In which year did the Berlin Wall fall?",options:["1987","1989","1991","1993"],answer:"1989",topic:"History"},
+  {question:"What year did the Titanic sink?",options:["1910","1912","1914","1916"],answer:"1912",topic:"History"},
+  {question:"Who was the first President of the United States?",options:["John Adams","Benjamin Franklin","Thomas Jefferson","George Washington"],answer:"George Washington",topic:"History"},
+  {question:"Which empire was ruled by Genghis Khan?",options:["Ottoman Empire","Mongol Empire","Roman Empire","Persian Empire"],answer:"Mongol Empire",topic:"History"},
+  {question:"In what year did World War II end?",options:["1943","1944","1945","1946"],answer:"1945",topic:"History"},
+  {question:"Which country was the first to give women the right to vote?",options:["United Kingdom","USA","New Zealand","France"],answer:"New Zealand",topic:"History"},
+  {question:"Who was the Egyptian queen who famously allied with Julius Caesar?",options:["Nefertiti","Cleopatra","Hatshepsut","Isis"],answer:"Cleopatra",topic:"History"},
+  {question:"The French Revolution began in which year?",options:["1776","1789","1799","1812"],answer:"1789",topic:"History"},
+  {question:"Which ancient wonder was located in Alexandria, Egypt?",options:["Hanging Gardens","Colossus of Rhodes","The Lighthouse","Temple of Artemis"],answer:"The Lighthouse",topic:"History"},
+  {question:"Who was the first man to walk on the moon?",options:["Buzz Aldrin","Yuri Gagarin","Neil Armstrong","John Glenn"],answer:"Neil Armstrong",topic:"History"},
+  // SCIENCE
+  {question:"Which element has the chemical symbol Au?",options:["Silver","Gold","Aluminum","Copper"],answer:"Gold",topic:"Science"},
+  {question:"Which planet is known as the Red Planet?",options:["Venus","Jupiter","Mars","Saturn"],answer:"Mars",topic:"Science"},
+  {question:"What is the smallest prime number?",options:["0","1","2","3"],answer:"2",topic:"Science"},
+  {question:"What is the hardest natural substance on Earth?",options:["Quartz","Diamond","Graphite","Obsidian"],answer:"Diamond",topic:"Science"},
+  {question:"How many bones are in the adult human body?",options:["196","206","216","226"],answer:"206",topic:"Science"},
+  {question:"What is the chemical formula for water?",options:["HO","H2O","H3O","OH2"],answer:"H2O",topic:"Science"},
+  {question:"How many chromosomes do humans have?",options:["23","44","46","48"],answer:"46",topic:"Science"},
+  {question:"What is the speed of light in a vacuum?",options:["300,000 km/s","150,000 km/s","450,000 km/s","200,000 km/s"],answer:"300,000 km/s",topic:"Science"},
+  {question:"Which gas makes up most of Earth's atmosphere?",options:["Oxygen","Carbon Dioxide","Argon","Nitrogen"],answer:"Nitrogen",topic:"Science"},
+  {question:"What is the powerhouse of the cell?",options:["Nucleus","Ribosome","Mitochondria","Golgi apparatus"],answer:"Mitochondria",topic:"Science"},
+  {question:"What force keeps planets in orbit around the sun?",options:["Magnetism","Gravity","Friction","Electromagnetism"],answer:"Gravity",topic:"Science"},
+  // GEOGRAPHY
+  {question:"What is the capital of Australia?",options:["Sydney","Melbourne","Canberra","Brisbane"],answer:"Canberra",topic:"Geography"},
+  {question:"What is the largest ocean on Earth?",options:["Atlantic","Indian","Arctic","Pacific"],answer:"Pacific",topic:"Geography"},
+  {question:"What currency is used in Japan?",options:["Yuan","Won","Yen","Ringgit"],answer:"Yen",topic:"Geography"},
+  {question:"In what country would you find the ancient city of Petra?",options:["Egypt","Jordan","Iraq","Israel"],answer:"Jordan",topic:"Geography"},
+  {question:"What is the longest river in the world?",options:["Amazon","Mississippi","Yangtze","Nile"],answer:"Nile",topic:"Geography"},
+  {question:"Which country has the most natural lakes?",options:["Russia","Brazil","USA","Canada"],answer:"Canada",topic:"Geography"},
+  {question:"What is the smallest country in the world?",options:["Monaco","San Marino","Liechtenstein","Vatican City"],answer:"Vatican City",topic:"Geography"},
+  {question:"Which mountain range separates Europe from Asia?",options:["Alps","Himalayas","Andes","Ural Mountains"],answer:"Ural Mountains",topic:"Geography"},
+  {question:"Which African country has the most pyramids?",options:["Egypt","Ethiopia","Libya","Sudan"],answer:"Sudan",topic:"Geography"},
+  {question:"What is the capital of Canada?",options:["Toronto","Vancouver","Ottawa","Montreal"],answer:"Ottawa",topic:"Geography"},
+  // LITERATURE
+  {question:"Who wrote Pride and Prejudice?",options:["Charlotte Bronte","George Eliot","Jane Austen","Virginia Woolf"],answer:"Jane Austen",topic:"Literature"},
+  {question:"Which Shakespeare play features the character Iago?",options:["Hamlet","Macbeth","Othello","King Lear"],answer:"Othello",topic:"Literature"},
+  {question:"Who wrote the Odyssey?",options:["Virgil","Socrates","Homer","Plato"],answer:"Homer",topic:"Literature"},
+  {question:"In which novel would you find the character Atticus Finch?",options:["The Great Gatsby","Of Mice and Men","To Kill a Mockingbird","Catcher in the Rye"],answer:"To Kill a Mockingbird",topic:"Literature"},
+  {question:"Who wrote 1984?",options:["Aldous Huxley","H.G. Wells","George Orwell","Ray Bradbury"],answer:"George Orwell",topic:"Literature"},
+  {question:"What is the name of the whale in Moby-Dick?",options:["Moby","Dick","The White Whale","Leviathan"],answer:"The White Whale",topic:"Literature"},
+  {question:"Who wrote Crime and Punishment?",options:["Leo Tolstoy","Anton Chekhov","Fyodor Dostoevsky","Ivan Turgenev"],answer:"Fyodor Dostoevsky",topic:"Literature"},
+  {question:"What dystopian novel features a society divided into factions?",options:["The Hunger Games","Divergent","Brave New World","The Giver"],answer:"Divergent",topic:"Literature"},
+  {question:"Who wrote One Hundred Years of Solitude?",options:["Pablo Neruda","Mario Vargas Llosa","Jorge Luis Borges","Gabriel Garcia Marquez"],answer:"Gabriel Garcia Marquez",topic:"Literature"},
+  {question:"In which Shakespeare play does the character Ophelia appear?",options:["Macbeth","Romeo and Juliet","Hamlet","A Midsummer Night Dream"],answer:"Hamlet",topic:"Literature"},
+  // MUSIC
+  {question:"How many strings does a standard violin have?",options:["Three","Four","Five","Six"],answer:"Four",topic:"Music"},
+  {question:"Which band released the album Dark Side of the Moon?",options:["Led Zeppelin","The Beatles","Pink Floyd","The Rolling Stones"],answer:"Pink Floyd",topic:"Music"},
+  {question:"Which composer wrote the Four Seasons?",options:["Bach","Mozart","Vivaldi","Handel"],answer:"Vivaldi",topic:"Music"},
+  {question:"What nationality was Freddie Mercury?",options:["British","Tanzanian","Indian","Zanzibari"],answer:"Zanzibari",topic:"Music"},
+  {question:"How many keys does a standard piano have?",options:["72","76","88","92"],answer:"88",topic:"Music"},
+  {question:"Which decade did hip-hop emerge as a genre?",options:["1960s","1970s","1980s","1990s"],answer:"1970s",topic:"Music"},
+  {question:"Who is known as the King of Pop?",options:["Prince","Elvis Presley","Michael Jackson","James Brown"],answer:"Michael Jackson",topic:"Music"},
+  {question:"Which instrument does a percussionist play?",options:["Clarinet","Drums","Viola","Trombone"],answer:"Drums",topic:"Music"},
+  {question:"What does BPM stand for in music?",options:["Bass Per Minute","Beats Per Measure","Beats Per Minute","Beat Pulse Meter"],answer:"Beats Per Minute",topic:"Music"},
+  {question:"Which country does reggae music originate from?",options:["Trinidad","Cuba","Jamaica","Haiti"],answer:"Jamaica",topic:"Music"},
+  // ART
+  {question:"Who painted the Sistine Chapel ceiling?",options:["Leonardo da Vinci","Raphael","Michelangelo","Donatello"],answer:"Michelangelo",topic:"Art"},
+  {question:"Who painted The Starry Night?",options:["Paul Gauguin","Claude Monet","Pablo Picasso","Vincent van Gogh"],answer:"Vincent van Gogh",topic:"Art"},
+  {question:"Which art movement did Salvador Dali belong to?",options:["Cubism","Impressionism","Surrealism","Abstract Expressionism"],answer:"Surrealism",topic:"Art"},
+  {question:"The Louvre museum is located in which city?",options:["Rome","Madrid","London","Paris"],answer:"Paris",topic:"Art"},
+  {question:"Who sculpted the statue of David?",options:["Rodin","Bernini","Donatello","Michelangelo"],answer:"Michelangelo",topic:"Art"},
+  {question:"What technique involves applying thick paint to a canvas?",options:["Fresco","Impasto","Watercolor","Sgraffito"],answer:"Impasto",topic:"Art"},
+  {question:"Which Japanese art form involves paper folding?",options:["Ikebana","Origami","Bonsai","Kabuki"],answer:"Origami",topic:"Art"},
+  {question:"Who painted the Mona Lisa?",options:["Raphael","Titian","Michelangelo","Leonardo da Vinci"],answer:"Leonardo da Vinci",topic:"Art"},
+  // FILM & TV
+  {question:"Who directed the 1993 film Schindlers List?",options:["Martin Scorsese","Francis Ford Coppola","Steven Spielberg","Stanley Kubrick"],answer:"Steven Spielberg",topic:"Film & TV"},
+  {question:"Which film won the first Academy Award for Best Picture?",options:["Gone with the Wind","Wings","Citizen Kane","All Quiet on the Western Front"],answer:"Wings",topic:"Film & TV"},
+  {question:"Who played Iron Man in the Marvel Cinematic Universe?",options:["Chris Evans","Robert Downey Jr.","Chris Hemsworth","Mark Ruffalo"],answer:"Robert Downey Jr.",topic:"Film & TV"},
+  {question:"Which TV show features the fictional paper company Dunder Mifflin?",options:["Parks and Recreation","30 Rock","The Office","Brooklyn Nine-Nine"],answer:"The Office",topic:"Film & TV"},
+  {question:"What 1994 film features a character named Forrest Gump?",options:["Cast Away","The Green Mile","Philadelphia","Forrest Gump"],answer:"Forrest Gump",topic:"Film & TV"},
+  {question:"In which film does the line You cant handle the truth appear?",options:["The Firm","A Few Good Men","Philadelphia","JFK"],answer:"A Few Good Men",topic:"Film & TV"},
+  {question:"Which actor played Hannibal Lecter in Silence of the Lambs?",options:["Gary Oldman","Anthony Hopkins","Jeremy Irons","Brian Cox"],answer:"Anthony Hopkins",topic:"Film & TV"},
+  {question:"What fictional country is Black Panther set in?",options:["Zamunda","Wakanda","Genosha","Latveria"],answer:"Wakanda",topic:"Film & TV"},
+  // SPORTS
+  {question:"Which country invented the sport of rugby?",options:["Australia","Scotland","England","Ireland"],answer:"England",topic:"Sports"},
+  {question:"How many players are on a standard soccer team on the field?",options:["9","10","11","12"],answer:"11",topic:"Sports"},
+  {question:"Which country has won the most FIFA World Cups?",options:["Germany","Argentina","Italy","Brazil"],answer:"Brazil",topic:"Sports"},
+  {question:"In tennis, what is the term for a score of 40-40?",options:["Tiebreak","Deuce","Fault","Love"],answer:"Deuce",topic:"Sports"},
+  {question:"How many rings are on the Olympic flag?",options:["4","5","6","7"],answer:"5",topic:"Sports"},
+  {question:"What sport is played at Wimbledon?",options:["Cricket","Badminton","Squash","Tennis"],answer:"Tennis",topic:"Sports"},
+  {question:"In basketball, how many points is a free throw worth?",options:["1","2","3","4"],answer:"1",topic:"Sports"},
+  {question:"Which country hosted the 2016 Summer Olympics?",options:["China","UK","Japan","Brazil"],answer:"Brazil",topic:"Sports"},
+  // FOOD & DRINK
+  {question:"What is the main ingredient in guacamole?",options:["Mango","Avocado","Tomato","Lime"],answer:"Avocado",topic:"Food"},
+  {question:"Which country is credited with inventing pizza?",options:["Greece","Spain","France","Italy"],answer:"Italy",topic:"Food"},
+  {question:"What is the main grain used to make sake?",options:["Wheat","Barley","Rice","Corn"],answer:"Rice",topic:"Food"},
+  {question:"Which spice is derived from the Crocus flower?",options:["Turmeric","Paprika","Saffron","Cardamom"],answer:"Saffron",topic:"Food"},
+  {question:"What type of pastry is used to make a croissant?",options:["Shortcrust","Filo","Choux","Puff"],answer:"Puff",topic:"Food"},
+  {question:"Which country produces the most coffee in the world?",options:["Colombia","Ethiopia","Vietnam","Brazil"],answer:"Brazil",topic:"Food"},
+  {question:"What is the Japanese word for raw fish served on rice?",options:["Sashimi","Tempura","Sushi","Ramen"],answer:"Sushi",topic:"Food"},
+  {question:"Which nut is used to make marzipan?",options:["Walnut","Cashew","Hazelnut","Almond"],answer:"Almond",topic:"Food"},
+  // NATURE
+  {question:"Which country is home to the kangaroo?",options:["New Zealand","South Africa","Australia","Brazil"],answer:"Australia",topic:"Nature"},
+  {question:"What is the fastest land animal?",options:["Lion","Cheetah","Pronghorn","Greyhound"],answer:"Cheetah",topic:"Nature"},
+  {question:"How many hearts does an octopus have?",options:["1","2","3","4"],answer:"3",topic:"Nature"},
+  {question:"What is the largest living structure on Earth?",options:["Amazon Rainforest","Great Wall of China","Great Barrier Reef","Sahara Desert"],answer:"Great Barrier Reef",topic:"Nature"},
+  {question:"Which animal has the longest lifespan?",options:["Giant Tortoise","Bowhead Whale","Greenland Shark","Ocean Quahog Clam"],answer:"Greenland Shark",topic:"Nature"},
+  {question:"What percentage of Earth's water is fresh water?",options:["3%","10%","25%","50%"],answer:"3%",topic:"Nature"},
+  {question:"Which bird cannot fly but is an excellent swimmer?",options:["Ostrich","Emu","Penguin","Kiwi"],answer:"Penguin",topic:"Nature"},
+  {question:"What is the world's largest rainforest?",options:["Congo","Daintree","Amazon","Borneo"],answer:"Amazon",topic:"Nature"},
+  // TECHNOLOGY
+  {question:"Who co-founded Apple with Steve Jobs?",options:["Bill Gates","Steve Wozniak","Paul Allen","Jony Ive"],answer:"Steve Wozniak",topic:"Technology"},
+  {question:"What does HTTP stand for?",options:["HyperText Transfer Protocol","High Transfer Text Process","HyperText Transmission Program","Hyperlink Text Transfer Protocol"],answer:"HyperText Transfer Protocol",topic:"Technology"},
+  {question:"In what year was the first iPhone released?",options:["2005","2006","2007","2008"],answer:"2007",topic:"Technology"},
+  {question:"What programming language was created by Guido van Rossum?",options:["Java","Ruby","Python","Perl"],answer:"Python",topic:"Technology"},
+  {question:"What does CPU stand for?",options:["Central Processing Unit","Computer Power Unit","Central Program Utility","Core Processing Unit"],answer:"Central Processing Unit",topic:"Technology"},
+  {question:"Which company developed the Android operating system?",options:["Apple","Microsoft","Samsung","Google"],answer:"Google",topic:"Technology"},
+  {question:"What is the name of the world's first computer bug — a literal one?",options:["A moth","A beetle","A fly","A cockroach"],answer:"A moth",topic:"Technology"},
+];
+
+async function fetchBatch() {
+  if (fetching) return;
+  fetching = true;
+  try {
+    await fetchFromAPI();
+  } catch(e) {
+    
+    fetchFromLocalBank();
+  } finally {
+    fetching = false;
+  }
+}
+
+async function fetchFromAPI() {
+  const topicLabel = TOPICS.find(t=>t.id===selectedTopic)?.label || "Mixed";
+  const avoidClause = recent.length
+    ? `Do not use any of these questions or very similar ones: ${recent.slice(-12).join(" | ").substring(0,400)}`
+    : "";
+  const topicClause = selectedTopic === "mixed"
+    ? "spanning a wide variety of subjects: history, science, geography, food, literature, music, art, nature, sports, language, film, technology"
+    : `all about ${topicLabel}, with varied difficulty and angles`;
+
+  const prompt = `Generate exactly 8 trivia questions ${topicClause}. ${avoidClause}
+
+Return ONLY a valid JSON array, absolutely no markdown, no explanation, no preamble.
+Each element must be exactly:
+{"question":"...","options":["...","...","...","..."],"answer":"...","topic":"..."}
+
+Requirements:
+- options: exactly 4 short answer strings, no letter prefixes
+- answer: must exactly match one of the four options
+- topic: one word category label
+- each question must have exactly one clearly correct answer
+- questions should be genuinely interesting and span different difficulty levels`;
+
+  const raw = await callClaude(prompt, 1600);
+  const clean = raw.replace(/\`\`\`json|\`\`\`/g,"").trim();
+  // Find the JSON array even if there's extra text
+  const match = clean.match(/\[.*\]/s);
+  if (!match) throw new Error("No JSON array found in response");
+  const batch = JSON.parse(match[0]);
+  if (!Array.isArray(batch) || batch.length === 0) throw new Error("Empty or invalid batch");
+  // Validate each question
+  const valid = batch.filter(q =>
+    q.question && Array.isArray(q.options) && q.options.length === 4 &&
+    q.answer && q.options.includes(q.answer)
+  );
+  if (valid.length === 0) throw new Error("No valid questions in batch");
+  recent = [...recent, ...valid.map(q=>q.question)].slice(-40);
+  queue = [...queue, ...valid];
+}
+
+function fetchFromLocalBank() {
+  // Filter by selected topic if not mixed
+  const topicLabel = TOPICS.find(t=>t.id===selectedTopic)?.label || "Mixed";
+  const topicFiltered = selectedTopic === "mixed"
+    ? QUESTION_BANK
+    : QUESTION_BANK.filter(q => q.topic.toLowerCase() === topicLabel.toLowerCase());
+  // Use topic-filtered pool, fall back to full bank if not enough
+  const base = topicFiltered.length >= 5 ? topicFiltered : QUESTION_BANK;
+  const unused = base.filter(q => !recent.includes(q.question));
+  const pool = unused.length >= 5 ? unused : base;
+  const shuffled = pool.slice().sort(() => Math.random() - 0.5);
+  const batch = shuffled.slice(0, 8);
+  recent = [...recent, ...batch.map(q=>q.question)].slice(-40);
+  queue = [...queue, ...batch];
+}
+
+// ── GAME FLOW ──
+async function startGame() {
+  $("start-err").classList.remove("show");
+  $("btn-start").disabled = true;
+  $("btn-start").textContent = "Setting the type…";
+
+  qNum=0; score=0; streak=0; bestStreak=0; correct=0; missed=0;
+  missedList=[]; queue=[]; recent=[];
+  updateLives(); updateScore();
+
+  // Update masthead topic
+  const topicLabel = TOPICS.find(t=>t.id===selectedTopic)?.label || "Mixed";
+  $("mast-eyebrow").textContent = `Daily Edition · ${topicLabel}`;
+
+  try {
+    // Race: fetch batch vs 10s timeout fallback
+    await Promise.race([
+      fetchBatch(),
+      new Promise(resolve => setTimeout(() => { fetchFromLocalBank(); resolve(); }, 10000))
+    ]);
+    if (!queue.length) fetchFromLocalBank();
+    showPage("pg-question");
+    nextQuestion();
+    fetchBatch().catch(()=>{});
+  } catch(e) {
+    // Last resort — just use local bank
+    fetchFromLocalBank();
+    if (queue.length) {
+      showPage("pg-question");
+      nextQuestion();
+    } else {
+      showErr("start-err", "Could not load questions. Please try again.");
+      $("btn-start").disabled = false;
+      $("btn-start").textContent = "Start";
+    }
+  }
+}
+
+function nextQuestion() {
+  if (!queue.length) {
+    showPage("pg-loading");
+    const poll = setInterval(()=>{
+      if (queue.length) {
+        clearInterval(poll);
+        showPage("pg-question");
+        nextQuestion();
+      }
+    },250);
+    return;
+  }
+  currentQ = queue.shift();
+  qNum++;
+  answered = false;
+  pendingNext = false;
+
+  if (queue.length < 3) fetchBatch().catch(()=>{});
+
+  // Reset UI
+  $("q-counter").textContent = "Question " + qNum;
+  updateScore();
+  $("q-topic-tag").textContent = currentQ.topic || "";
+  $("q-text").textContent = currentQ.question;
+
+  const banner = $("miss-banner");
+  if (missed===1)      { banner.textContent="⚑ One missed — two remaining"; banner.classList.add("show"); }
+  else if (missed===2) { banner.textContent="⚑ Two missed — one remaining"; banner.classList.add("show"); }
+  else                 { banner.classList.remove("show"); }
+
+  // Render answers
+  const list = $("answers-list");
+  list.innerHTML = "";
+  currentQ.options.forEach((opt,i)=>{
+    const div = document.createElement("div");
+    div.className = "answer";
+    div.innerHTML = `<span class="answer-bullet">${BULLETS[i]}</span><span class="answer-text">${opt}</span><svg class="annotation-svg" id="ann-${i}"></svg>`;
+    div.onclick = () => handleAnswer(opt, div);
+    list.appendChild(div);
+  });
+
+}
+
+// ── HANDWRITING ANNOTATIONS ──
+function drawCircle(answerEl) {
+  const svg = answerEl.querySelector(".annotation-svg");
+  if (!svg) return;
+
+  // Target just the text span, not the whole row
+  const textEl = answerEl.querySelector(".answer-text");
+  const rowRect = answerEl.getBoundingClientRect();
+  const txtRect = textEl.getBoundingClientRect();
+
+  // Coords of text relative to the answer row
+  const tx = txtRect.left - rowRect.left;
+  const ty = txtRect.top  - rowRect.top;
+  const tw = txtRect.width;
+  const th = txtRect.height;
+
+  const W = rowRect.width, H = rowRect.height;
+  svg.setAttribute("viewBox", `0 0 ${W} ${H}`);
+
+  // Circle centered on the text with a small tight padding
+  const pad = 6;
+  const cx = tx + tw / 2;
+  const cy = ty + th / 2;
+  const rx = tw / 2 + pad;
+  const ry = th / 2 + pad + 2;
+
+  // Single smooth ellipse with slight hand-drawn imperfection
+  // Using 4-arc cubic bezier approximation (kappa = 0.5522)
+  const k = 0.56;
+  const path = [
+    `M ${cx} ${cy - ry}`,
+    `C ${cx + rx*k} ${cy - ry},  ${cx + rx} ${cy - ry*k},  ${cx + rx} ${cy}`,
+    `C ${cx + rx} ${cy + ry*k},  ${cx + rx*k} ${cy + ry},  ${cx} ${cy + ry + 1}`,
+    `C ${cx - rx*k} ${cy + ry},  ${cx - rx} ${cy + ry*k},  ${cx - rx} ${cy - 1}`,
+    `C ${cx - rx} ${cy - ry*k},  ${cx - rx*k} ${cy - ry},  ${cx} ${cy - ry}`,
+  ].join(" ");
+
+  const p = document.createElementNS("http://www.w3.org/2000/svg","path");
+  p.setAttribute("class","circle-path");
+  p.setAttribute("d", path);
+  svg.appendChild(p);
+  const len = p.getTotalLength();
+  p.style.strokeDasharray = len;
+  p.style.strokeDashoffset = len;
+  requestAnimationFrame(()=>{ p.classList.add("draw"); });
+}
+
+function drawStrike(answerEl) {
+  const svg = answerEl.querySelector(".annotation-svg");
+  if (!svg) return;
+
+  // Strike through just the text, horizontally at text midline
+  const textEl = answerEl.querySelector(".answer-text");
+  const rowRect = answerEl.getBoundingClientRect();
+  const txtRect = textEl.getBoundingClientRect();
+
+  const tx = txtRect.left - rowRect.left;
+  const ty = txtRect.top  - rowRect.top;
+  const tw = txtRect.width;
+  const th = txtRect.height;
+
+  const W = rowRect.width, H = rowRect.height;
+  svg.setAttribute("viewBox", `0 0 ${W} ${H}`);
+
+  // Horizontal line through the vertical center of the text
+  // with a gentle hand-drawn bow (slight curve upward in the middle)
+  const y  = ty + th * 0.52;
+  const x1 = tx - 2;
+  const x2 = tx + tw + 2;
+  const mx = (x1 + x2) / 2;
+  const my = y - th * 0.06; // subtle upward arc
+
+  const path = `M ${x1} ${y + 1} Q ${mx} ${my} ${x2} ${y}`;
+
+  const p = document.createElementNS("http://www.w3.org/2000/svg","path");
+  p.setAttribute("class","strike-path");
+  p.setAttribute("d", path);
+  svg.appendChild(p);
+  const len = p.getTotalLength();
+  p.style.strokeDasharray = len;
+  p.style.strokeDashoffset = len;
+  requestAnimationFrame(()=>{ p.classList.add("draw"); });
+}
+
+function handleAnswer(chosen, el) {
+  if (answered) return;
+  answered = true;
+  const isCorrect = chosen === currentQ.answer;
+
+  // Lock all answers and show correct/wrong state
+  document.querySelectorAll(".answer").forEach((a,i)=>{
+    a.classList.add("locked");
+    const txt = a.querySelector(".answer-text").textContent;
+    if (txt===currentQ.answer && txt!==chosen) {
+      a.classList.add("correct");
+      drawCircle(a);
+    } else if (txt===chosen && !isCorrect) {
+      a.classList.add("wrong");
+      drawStrike(a);
+    } else if (txt!==currentQ.answer) {
+      a.classList.add("dim");
+    }
+  });
+  if (isCorrect) {
+    el.classList.add("correct");
+    drawCircle(el);
+  }
+
+  // Score / state update
+  if (isCorrect) {
+    streak++; bestStreak=Math.max(bestStreak,streak); correct++;
+    score += 100 + (streak-1)*15;
+  } else {
+    streak=0; missed++;
+    missedList.push({question:currentQ.question,correctAnswer:currentQ.answer,topic:currentQ.topic||""});
+    updateLives();
+  }
+  updateScore();
+
+  // Flash overlay
+  const flash = $("answer-flash");
+  flash.className = isCorrect ? "flash-correct do-flash" : "flash-wrong do-flash";
+  setTimeout(() => { flash.className = ""; }, 420);
+
+  // Pause so result lands, then swipe to next
+  const delay = isCorrect ? 650 : 1000;
+  setTimeout(() => {
+    if (missed >= LIVES) {
+      cardSwipeThen(() => showResults());
+    } else {
+      cardSwipeThen(() => nextQuestion());
+    }
+  }, delay);
+}
+
+function cardSwipeThen(callback) {
+  const viewport = $("card-viewport");
+  const outCard  = $("current-card");
+
+  // Build the incoming card (hidden below) with next question content
+  callback(); // populates the DOM into current-card
+  // But we need to animate: clone current as "out", let current become "in"
+  // Approach: wrap outCard in exit animation, then slide current-card in
+  const clone = outCard.cloneNode(true);
+  clone.removeAttribute("id");
+  clone.classList.add("card-exit");
+  clone.style.position = "absolute";
+  clone.style.top = "0";
+  clone.style.left = "0";
+  clone.style.right = "0";
+  clone.style.zIndex = "2";
+  viewport.appendChild(clone);
+
+  // New content already in current-card — animate it in from below
+  outCard.classList.add("card-enter");
+  outCard.style.position = "relative";
+  outCard.style.zIndex = "1";
+
+  // Clean up after animation
+  setTimeout(() => {
+    clone.remove();
+    outCard.classList.remove("card-enter");
+    outCard.style.position = "";
+    outCard.style.zIndex = "";
+  }, 450);
+}
+
+// ── RESULTS ──
+async function showResults() {
+  showPage("pg-results");
+  const pct = qNum>0?Math.round(correct/qNum*100):0;
+  $("res-head").textContent = pct>=80?"Exceptional Run":pct>=60?"Solid Knowledge":pct>=40?"Room to Grow":"Tough Session";
+  $("res-sub").textContent = `${correct} of ${qNum} correct — ${pct}% accuracy`;
+  $("res-correct").textContent=correct;
+  $("res-streak").textContent=bestStreak;
+  $("res-pct").textContent=pct+"%";
+
+  const container = $("missed-list");
+  container.innerHTML="";
+  missedList.forEach((m,i)=>{
+    const art=document.createElement("div");
+    art.className="missed-art";
+    art.innerHTML=`
+      <div class="missed-kicker">Missed · ${m.topic}</div>
+      <div class="missed-q">${m.question}</div>
+      <div class="missed-ans">✓ ${m.correctAnswer}</div>
+      <div class="missed-exp exp-loading" id="exp-${i}">Researching…</div>`;
+    container.appendChild(art);
+  });
+
+  if (missedList.length === 0) return;
+
+  const EXPLAINERS = {
+  "In which year did the Berlin Wall fall?": "The Berlin Wall fell on November 9, 1989, after the East German government unexpectedly announced that citizens could cross freely. Crowds gathered at checkpoints and began tearing the wall apart with hammers, in scenes that symbolized the end of the Cold War and led directly to German reunification in October 1990.",
+  "What year did the Titanic sink?": "The RMS Titanic sank on April 15, 1912, less than three hours after striking an iceberg in the North Atlantic on her maiden voyage. Of the 2,224 people aboard, more than 1,500 died — largely because the ship carried only enough lifeboats for about half its passengers, a legal oversight that shocked the world and changed maritime safety law forever.",
+  "Who was the first President of the United States?": "George Washington served as the first U.S. President from 1789 to 1797, setting precedents still followed today — including voluntarily stepping down after two terms. He was unanimously elected by the Electoral College both times, a feat never repeated, and is the only president to have a state named after him.",
+  "Which empire was ruled by Genghis Khan?": "Genghis Khan founded the Mongol Empire in 1206 and built it into the largest contiguous land empire in history, stretching from the Pacific Ocean to Eastern Europe. He united nomadic tribes through a combination of military genius and meritocracy, promoting soldiers based on ability rather than birth — a radical idea for the time.",
+  "In what year did World War II end?": "World War II ended in 1945 — first in Europe on May 8 (V-E Day) when Germany surrendered, then in the Pacific on September 2 (V-J Day) when Japan formally surrendered aboard the USS Missouri. The war killed an estimated 70–85 million people, making it the deadliest conflict in human history.",
+  "Which country was the first to give women the right to vote?": "New Zealand became the first self-governing country to grant women the right to vote in national elections in 1893, largely due to the campaigning of suffragist Kate Sheppard. Interestingly, women in New Zealand couldn't stand for parliament themselves until 1919 — 26 years later.",
+  "Who was the Egyptian queen who famously allied with Julius Caesar?": "Cleopatra VII allied with Julius Caesar in 48 BCE, using the partnership to secure her hold on the Egyptian throne against her brother Ptolemy XIII. She later formed a powerful alliance with Mark Antony. Despite her Greek Macedonian ancestry, she was famously the first ruler of the Ptolemaic dynasty to speak the Egyptian language.",
+  "The French Revolution began in which year?": "The French Revolution began in 1789 with widespread discontent over food shortages, heavy taxation, and the vast inequality between the aristocracy and common people. The storming of the Bastille prison on July 14 became its defining symbol — Bastille Day is still celebrated as France's national holiday.",
+  "Which ancient wonder was located in Alexandria, Egypt?": "The Lighthouse of Alexandria, built on the island of Pharos around 280 BCE, stood roughly 100 meters tall — making it one of the tallest man-made structures in the ancient world for centuries. It guided ships into Alexandria's busy harbor using a mirror that reflected sunlight by day and fire by night, and stood for over 1,500 years before earthquakes brought it down.",
+  "Who was the first man to walk on the moon?": "Neil Armstrong became the first person to walk on the moon on July 20, 1969, during NASA's Apollo 11 mission. His famous words — 'That's one small step for man, one giant leap for mankind' — were broadcast live to an estimated 600 million viewers worldwide, making it one of the most-watched television events in history.",
+  "Which element has the chemical symbol Au?": "Gold's symbol Au comes from the Latin word 'aurum.' It's one of the least reactive chemical elements, which is why it doesn't tarnish or corrode — making it ideal for jewelry, coins, and electronics. All the gold ever mined in human history would fit into roughly three and a half Olympic swimming pools.",
+  "Which planet is known as the Red Planet?": "Mars appears red because its surface is coated in iron oxide — essentially rust. It has the largest volcano in the solar system, Olympus Mons, which stands nearly three times taller than Everest. NASA's Perseverance rover is currently exploring Mars searching for signs of ancient microbial life.",
+  "What is the smallest prime number?": "Two is unique among all prime numbers because it is the only even prime — every other even number is divisible by 2, so none can be prime. Prime numbers are the building blocks of all integers and form the foundation of modern encryption, including the security behind your banking and messaging apps.",
+  "What is the hardest natural substance on Earth?": "Diamond rates 10 on the Mohs hardness scale — the maximum — because its carbon atoms form an extraordinarily strong tetrahedral crystal lattice. Diamonds form roughly 100 miles underground under immense pressure and heat, and are brought to the surface by volcanic eruptions through formations called kimberlite pipes.",
+  "How many bones are in the adult human body?": "Adults have 206 bones, but babies are born with around 270 to 300. Many fuse together during childhood and adolescence — for example, the skull starts as several plates that gradually merge. The smallest bone in the body is the stapes in the inner ear, about the size of a grain of rice.",
+  "What is the chemical formula for water?": "Water (H₂O) is two hydrogen atoms bonded to one oxygen atom. Its bent molecular shape and slight electrical charge give it unique properties — like surface tension, the ability to dissolve more substances than any other liquid, and the unusual fact that its solid form (ice) is less dense than its liquid form, which is why ice floats.",
+  "How many chromosomes do humans have?": "Humans have 46 chromosomes arranged in 23 pairs — one set inherited from each parent. The 23rd pair determines biological sex: XX for female, XY for male. Having an extra or missing chromosome causes conditions like Down syndrome (an extra chromosome 21) or Turner syndrome (a missing X chromosome).",
+  "What is the speed of light in a vacuum?": "Light travels at approximately 299,792 kilometers per second in a vacuum — so fast that it could circle Earth about 7.5 times in a single second. Einstein's theory of special relativity established this as the ultimate speed limit of the universe. The light you see from the sun is actually about 8 minutes old when it reaches your eyes.",
+  "Which gas makes up most of Earth's atmosphere?": "Nitrogen makes up about 78% of Earth's atmosphere, with oxygen at roughly 21% and argon at about 0.9%. Despite being all around us, most living organisms can't use atmospheric nitrogen directly — it must first be 'fixed' into usable compounds by specialized bacteria, a process essential to all life on Earth.",
+  "What is the powerhouse of the cell?": "The mitochondria generate energy for cells by converting glucose and oxygen into ATP (adenosine triphosphate) — the molecule that powers almost every cellular process. Uniquely, mitochondria have their own DNA, leading scientists to theorize they were once free-living bacteria that became incorporated into larger cells over a billion years ago.",
+  "What force keeps planets in orbit around the sun?": "Gravity is a fundamental force that attracts all objects with mass to one another. Isaac Newton first described it mathematically in 1687; Einstein later reframed it as the curvature of spacetime in his general theory of relativity. Without gravity, planets would fly off in straight lines rather than following their curved orbital paths.",
+  "What is the capital of Australia?": "Canberra became Australia's capital in 1913 as a deliberate compromise between the rival cities of Sydney and Melbourne, both of which wanted the honor. It was purpose-built in a rural area and designed by American architects Walter Burley Griffin and Marion Mahony Griffin, who won an international competition. Today it's home to about 450,000 people.",
+  "What is the largest ocean on Earth?": "The Pacific Ocean covers more than 165 million square kilometers — larger than all of Earth's landmasses combined. It contains more than half the world's oceanic water and is home to the Mariana Trench, the deepest point on Earth at nearly 11 kilometers below the surface, deeper than Mount Everest is tall.",
+  "What currency is used in Japan?": "The Japanese yen was introduced in 1871 as part of the Meiji government's sweeping modernization program. The word 'yen' (円) means 'round object,' referring to the circular coins of the era. Japan is famous for its vending machines that accept coins — there are roughly 5 million vending machines in the country, one for every 23 people.",
+  "In what country would you find the ancient city of Petra?": "Petra, in southern Jordan, was the capital of the Nabataean Kingdom and was carved directly into rose-red sandstone cliffs around the 4th century BCE. The city's most iconic structure, Al-Khazneh (The Treasury), famously appeared in Indiana Jones and the Last Crusade. Petra was largely unknown to the Western world until 1812.",
+  "What is the longest river in the world?": "The Nile stretches approximately 6,650 kilometers through northeastern Africa, flowing northward through 11 countries before emptying into the Mediterranean Sea. For thousands of years its annual floods deposited rich silt along its banks, making the surrounding land extraordinarily fertile and allowing ancient Egyptian civilization to flourish in the middle of a desert.",
+  "Which country has the most natural lakes?": "Canada contains more than 60% of the world's lakes — approximately 879,800 lakes larger than 10 square kilometers. This is a legacy of the last Ice Age: glaciers carved out vast depressions across the Canadian Shield, which filled with meltwater as temperatures rose. Canada also has more freshwater than any other country on Earth.",
+  "What is the smallest country in the world?": "Vatican City covers just 0.44 square kilometers within the city of Rome, making it the world's smallest country by both area and population (around 800 people). It has been an independent state since the Lateran Treaty of 1929, signed by Mussolini and the Holy See, and is the headquarters of the Roman Catholic Church.",
+  "Which mountain range separates Europe from Asia?": "The Ural Mountains stretch about 2,500 kilometers from the Arctic Ocean to the Ural River in Kazakhstan, forming the traditional boundary between Europe and Asia. They are among the world's oldest mountain ranges, formed over 250 million years ago, and are rich in minerals including iron, copper, gold, and platinum.",
+  "Which African country has the most pyramids?": "Sudan (ancient Nubia) has more pyramids than Egypt — around 200 to 255 compared to Egypt's 130. The Nubian pyramids, built by the rulers of the ancient Kushite kingdoms, are generally taller and narrower than their Egyptian counterparts. They remained largely unknown to the outside world until the 19th century.",
+  "What is the capital of Canada?": "Ottawa became Canada's capital in 1857, chosen by Queen Victoria partly because of its defensible location along the Ottawa River and partly to resolve the rivalry between Toronto and Montreal. Today it's home to Parliament Hill, the National Gallery of Canada, and one of the country's highest concentrations of museums per capita.",
+  "Who wrote Pride and Prejudice?": "Jane Austen published Pride and Prejudice in 1813, having originally drafted it in the 1790s under the title 'First Impressions.' The novel's sharp wit and its heroine Elizabeth Bennet were revolutionary — Austen wrote complex, independent female characters at a time when women had very few legal rights. It has never gone out of print.",
+  "Which Shakespeare play features the character Iago?": "Othello, written around 1603, features Iago as one of literature's most chilling villains — a man who destroys Othello through jealousy, manipulation, and brilliantly concealed malice. The play was groundbreaking for its time in placing a Black man as its tragic hero. Iago speaks more lines than Othello himself.",
+  "Who wrote the Odyssey?": "Homer is credited with composing the Odyssey, the epic poem recounting Odysseus's 10-year journey home after the Trojan War. Scholars debate whether Homer was one person or a tradition of oral poets. The Odyssey is one of the oldest works of Western literature, composed around the 8th century BCE, and has directly inspired countless works from Joyce's Ulysses to the Coen Brothers' O Brother, Where Art Thou?",
+  "In which novel would you find the character Atticus Finch?": "Atticus Finch is the moral center of Harper Lee's To Kill a Mockingbird (1960), a lawyer in 1930s Alabama who defends a Black man falsely accused of a crime. The novel won the Pulitzer Prize and has sold over 40 million copies worldwide. Lee's follow-up, Go Set a Watchman, controversially portrayed an older, more compromised Atticus.",
+  "Who wrote 1984?": "George Orwell wrote 1984 in 1948 while seriously ill with tuberculosis on the Scottish island of Jura. The title came from simply reversing the last two digits of the year he finished it. The novel introduced words like 'doublethink,' 'thoughtcrime,' and 'Big Brother' into everyday language — all still in common use today.",
+  "What is the name of the whale in Moby-Dick?": "In Herman Melville's 1851 novel, the white sperm whale is referred to simply as 'the White Whale' or 'Moby Dick' — 'Moby-Dick' with a hyphen is the book's title. The obsessive Captain Ahab hunts the whale after it bit off his leg. The novel was a commercial failure when published but is now considered one of the greatest American novels ever written.",
+  "Who wrote Crime and Punishment?": "Fyodor Dostoevsky published Crime and Punishment in 1866, writing it in a rush to pay off gambling debts. The novel follows Raskolnikov, a student who murders a pawnbroker and then spirals into psychological torment. Dostoevsky drew on his own experience facing a mock execution and serving years in a Siberian labor camp to portray psychological suffering with devastating realism.",
+  "What dystopian novel features a society divided into factions?": "Divergent (2011), by Veronica Roth, is set in a future Chicago where society is divided into five factions based on virtues: Dauntless (brave), Amity (peaceful), Erudite (intelligent), Candor (honest), and Abnegation (selfless). The protagonist Tris discovers she doesn't fit neatly into any single faction — making her 'Divergent' and dangerous to the ruling order.",
+  "Who wrote One Hundred Years of Solitude?": "Gabriel García Márquez published Cien años de soledad in 1967. The novel follows seven generations of the Buendía family in the fictional town of Macondo, blending magical events with everyday life in the style known as magical realism. It sold 50 million copies and is widely considered the greatest novel written in Spanish. García Márquez won the Nobel Prize in Literature in 1982.",
+  "In which Shakespeare play does the character Ophelia appear?": "Ophelia appears in Hamlet, written around 1600, as the young woman who loves Prince Hamlet. Her descent into madness and drowning — arguably caused by Hamlet's erratic behavior and her father's murder — is one of literature's most tragic subplots. The Pre-Raphaelite painter John Everett Millais' depiction of her floating among flowers is one of the most famous paintings in the world.",
+  "How many strings does a standard violin have?": "The violin's four strings are tuned G, D, A, and E, from lowest to highest pitch. It is the smallest and highest-pitched member of the bowed string family, which also includes viola, cello, and double bass. The violin emerged in 16th-century northern Italy, with the finest instruments — made by Antonio Stradivari — still considered unsurpassed and worth millions today.",
+  "Which band released the album Dark Side of the Moon?": "Pink Floyd released The Dark Side of the Moon in 1973, and it spent an astonishing 741 weeks on the Billboard 200 chart — a record that stood for decades. The album's iconic prism cover was designed by Storm Thorgerson. It reportedly syncs with The Wizard of Oz if you start it at the right moment — a legend the band has always denied but never fully dispelled.",
+  "Which composer wrote the Four Seasons?": "Antonio Vivaldi composed The Four Seasons around 1720 as a set of four violin concertos, each depicting a different season through music and accompanying sonnets. Vivaldi wrote over 500 concertos during his lifetime, though he died in poverty in 1741 and was buried in a simple grave. His work was largely forgotten until Johann Sebastian Bach helped revive interest in it.",
+  "What nationality was Freddie Mercury?": "Freddie Mercury was born Farrokh Bulsara in Zanzibar (now part of Tanzania) to Parsi parents from India. He moved to England as a teenager and co-founded Queen in 1970. His extraordinary vocal range spanned four octaves, and his performance at Live Aid in 1985 is frequently cited as the greatest live rock performance in history.",
+  "How many keys does a standard piano have?": "A standard modern piano has 88 keys — 52 white and 36 black — spanning over seven octaves. This range covers virtually every note used in Western music. The piano was invented by Bartolomeo Cristofori in Italy around 1700; he called it the 'gravicembalo col piano e forte' — meaning 'harpsichord with soft and loud' — because unlike the harpsichord, it could vary in volume.",
+  "Which decade did hip-hop emerge as a genre?": "Hip-hop emerged in the South Bronx, New York, in the early 1970s, born from block parties where DJs isolated percussion breaks from funk and soul records. DJ Kool Herc is widely credited as the genre's founding father. The culture encompassed four elements: DJing, MCing (rapping), breakdancing, and graffiti art. It is now the world's most-streamed music genre.",
+  "Who is known as the King of Pop?": "Michael Jackson earned the title 'King of Pop' through record-breaking albums like Thriller (1982), which remains the best-selling album of all time at over 66 million copies sold. He pioneered music video as an art form and introduced moves like the moonwalk to global audiences during his 1983 Motown 25 TV performance, a moment widely considered the most iconic in pop music history.",
+  "Which instrument does a percussionist play?": "Percussionists play instruments that produce sound by being struck, shaken, or scraped — drums being the most common. The percussion family is the largest in the orchestra and includes timpani, snare drum, xylophone, cymbals, and marimba. Drums are among the oldest musical instruments ever found, with examples dating back over 5,500 years discovered in China.",
+  "What does BPM stand for in music?": "BPM — Beats Per Minute — measures the tempo of music. A slow ballad might sit at 60–80 BPM, while EDM dance tracks often run at 128–140 BPM. The human resting heart rate is typically 60–100 BPM, which may be why music near that range often feels naturally comfortable. DJs use BPM to beatmatch tracks smoothly during a set.",
+  "Which country does reggae music originate from?": "Reggae originated in Jamaica in the late 1960s, evolving from earlier Jamaican styles like ska and rocksteady. Bob Marley is its most famous ambassador, bringing it to global audiences in the 1970s. In 2018, UNESCO inscribed reggae on its list of Intangible Cultural Heritage of Humanity, recognizing its role in social justice movements worldwide.",
+  "Who painted the Sistine Chapel ceiling?": "Michelangelo painted the Sistine Chapel ceiling between 1508 and 1512, completing the 500-square-meter work largely alone while lying on scaffolding. The ceiling features over 300 figures and nine scenes from Genesis, including the famous 'Creation of Adam.' Despite being primarily a sculptor, Michelangelo considered himself reluctant to take the commission — but produced one of the greatest artworks in history.",
+  "Who painted The Starry Night?": "Vincent van Gogh painted The Starry Night in June 1889 while voluntarily staying at an asylum in Saint-Rémy-de-Provence, France. He painted it from memory based on the view from his room window. Despite being one of the world's most recognized paintings, Van Gogh sold only one painting during his lifetime and died in poverty at 37.",
+  "Which art movement did Salvador Dali belong to?": "Salvador Dalí was one of Surrealism's most prominent figures, a movement founded in the 1920s that drew on dreamlike imagery and the unconscious mind. His 1931 painting The Persistence of Memory — featuring melting clocks draped over a barren landscape — is one of the most recognizable images in art history. Dalí was also a showman who cultivated a deliberately eccentric public persona.",
+  "The Louvre museum is located in which city?": "The Louvre in Paris is the world's most visited art museum, drawing around 9 million visitors a year. It began as a royal palace in the 12th century and became a public museum during the French Revolution in 1793. Its collection spans 35,000 years of history across 380,000 objects — but only about 35,000 are on display at any one time.",
+  "Who sculpted the statue of David?": "Michelangelo carved David between 1501 and 1504 from a single block of white Carrara marble that had already been partially worked — and partially ruined — by two previous sculptors. Standing 5.17 meters tall, the statue depicts the biblical hero David just before his battle with Goliath, and was intended as a symbol of the Florentine Republic's defiance of larger enemies.",
+  "What technique involves applying thick paint to a canvas?": "Impasto is the technique of applying paint so thickly that the brushstrokes or palette knife marks stand out in three dimensions. Van Gogh was a master of the technique — in The Starry Night, the paint is so thick it casts real shadows. The word comes from the Italian for 'dough' or 'paste,' evoking the dense, textured quality of the paint.",
+  "Which Japanese art form involves paper folding?": "Origami derives from the Japanese words 'oru' (to fold) and 'kami' (paper). While paper folding existed in China and Europe, the Japanese art form developed its own distinct tradition after paper became widely available in Japan around the 6th century CE. Today origami principles are used in aerospace engineering to fold solar panels that can be deployed in space.",
+  "Who painted the Mona Lisa?": "Leonardo da Vinci painted the Mona Lisa between approximately 1503 and 1519, and it is believed to depict Lisa Gherardini, the wife of a Florentine merchant. It is housed in the Louvre behind bulletproof glass after being stolen in 1911 (and recovered two years later). Its fame exploded in the 20th century — before then, it wasn't even considered Leonardo's greatest work.",
+  "Who directed the 1993 film Schindlers List?": "Steven Spielberg directed Schindler's List in 1993, filming it in black and white in Poland on the actual locations where events occurred. The film won seven Academy Awards including Best Picture and Best Director — Spielberg's first. He donated his entire director's fee to USC Shoah Foundation, which he subsequently established to record Holocaust survivor testimony.",
+  "Which film won the first Academy Award for Best Picture?": "Wings (1927), a World War I aerial combat film, won Best Picture at the first Academy Awards ceremony in 1929 — a 15-minute event held at the Hollywood Roosevelt Hotel. It remains the only silent film ever to win the top Oscar. The ceremony had no suspense: the winners had been announced three months before the event.",
+  "Who played Iron Man in the Marvel Cinematic Universe?": "Robert Downey Jr. played Tony Stark / Iron Man across 10 MCU films from 2008 to 2019. His casting was considered a gamble at the time due to his troubled personal history, but it launched one of the most successful film franchises in history. His final line in Avengers: Endgame — 'I am Iron Man' — is among the most celebrated moments in modern cinema.",
+  "Which TV show features the fictional paper company Dunder Mifflin?": "The Office (US version) aired on NBC from 2005 to 2013, based on Ricky Gervais's British original. Set at the fictional Dunder Mifflin Scranton branch, it pioneered the mockumentary format for American sitcoms. Despite modest ratings during its run, it became one of the most-streamed shows in history after moving to Netflix and Peacock.",
+  "What 1994 film features a character named Forrest Gump?": "Forrest Gump (1994), directed by Robert Zemeckis and starring Tom Hanks, follows a simple-minded but kind-hearted Alabama man who inadvertently influences several major historical events. The film won six Oscars including Best Picture, and its famous line — 'Life is like a box of chocolates' — became one of the most quoted in cinema history.",
+  "In which film does the line You cant handle the truth appear?": "The line is delivered by Jack Nicholson as Colonel Jessup in A Few Good Men (1992), directed by Rob Reiner. Nicholson improvised slight variations during filming; the version that made the final cut is actually 'You can't handle the truth!' — with an exclamation rather than the question mark it's often misquoted with. It's consistently ranked among the most memorable movie quotes ever.",
+  "Which actor played Hannibal Lecter in Silence of the Lambs?": "Anthony Hopkins played Dr. Hannibal Lecter in The Silence of the Lambs (1991), despite appearing on screen for only 16 minutes — one of the shortest performances ever to win the Academy Award for Best Actor. The film swept all five major Oscars, a feat only achieved by two other films: It Happened One Night and One Flew Over the Cuckoo's Nest.",
+  "What fictional country is Black Panther set in?": "Wakanda is a fictional East African nation in the Marvel universe, portrayed as the world's most technologically advanced country thanks to its vast deposits of vibranium — a fictional metal that absorbs and redirects energy. Black Panther (2018) grossed over $1.3 billion worldwide and became a cultural phenomenon, being the first superhero film nominated for the Academy Award for Best Picture.",
+  "Which country invented the sport of rugby?": "Rugby is said to have been born in 1823 at Rugby School in Warwickshire, England, when a student named William Webb Ellis picked up the ball during a football match and ran with it. The Rugby World Cup trophy is named the Webb Ellis Cup in his honor. The story may be apocryphal, but Rugby School embraced it — you can still see a plaque commemorating the moment on the school grounds.",
+  "How many players are on a standard soccer team on the field?": "Each soccer team fields 11 players, including one goalkeeper. The Laws of the Game specify that a match cannot start if either team has fewer than 7 players. The total of 22 players on a full-size pitch was not always standard — early Victorian-era football matches sometimes featured dozens of players per side.",
+  "Which country has won the most FIFA World Cups?": "Brazil has won the FIFA World Cup five times — 1958, 1962, 1970, 1994, and 2002 — more than any other nation. They are also the only team to have qualified for every single World Cup since the tournament began in 1930. The 1970 Brazilian squad, led by Pelé, is widely considered the greatest international football team ever assembled.",
+  "In tennis, what is the term for a score of 40-40?": "Deuce in tennis means both players are tied at 40-40. From deuce, a player must win two consecutive points to win the game — first winning 'advantage,' then the game point. The word 'deuce' likely derives from the French 'à deux' meaning 'to two,' referring to the two points needed to win. The unusual 15-30-40 scoring system dates to medieval France.",
+  "How many rings are on the Olympic flag?": "The Olympic flag features five interlocking rings in blue, yellow, black, green, and red on a white background — representing the five continents of the world united by the Olympic movement. The flag was designed by Pierre de Coubertin, founder of the modern Olympics, in 1913, and first flown at the 1920 Antwerp Games. At least one of the ring colors appears in every national flag in the world.",
+  "What sport is played at Wimbledon?": "Wimbledon is the oldest tennis tournament in the world, first held in 1877 at the All England Croquet and Lawn Tennis Club in London. It is one of the four Grand Slam tournaments and is unique for being played on grass courts. Players are still required to wear predominantly white clothing — a tradition dating back to Victorian-era notions of modesty and perspiration.",
+  "In basketball, how many points is a free throw worth?": "A free throw in basketball is worth 1 point and is awarded after certain fouls. Players shoot from the free-throw line, 4.57 meters from the basket. Despite being an uncontested shot, free throw percentages vary wildly — the best shooters make about 90%, while some elite players have career averages below 50%, a phenomenon sometimes called 'Hack-a-Shaq' when opponents deliberately foul poor shooters.",
+  "Which country hosted the 2016 Summer Olympics?": "Brazil hosted the 2016 Summer Olympics in Rio de Janeiro — the first Games ever held in South America. The event was overshadowed by concerns about the Zika virus, political instability, and polluted venues. But it also produced memorable moments, including Usain Bolt winning his third consecutive 100m and 200m Olympic titles and Michael Phelps ending his career as the most decorated Olympian of all time.",
+  "What is the main ingredient in guacamole?": "Avocados — the base of guacamole — are technically berries and are native to south-central Mexico, where the Aztecs called them 'ahuacatl.' They are unusual in that they ripen only after being picked from the tree. The tree itself can keep fruit on it for months, effectively acting as a living storage system. Avocados are one of the few fruits high in healthy monounsaturated fat rather than sugar.",
+  "Which country is credited with inventing pizza?": "Pizza as we know it originated in Naples, Italy, in the 18th–19th century, when locals began adding tomato to flatbreads. The Margherita — topped with tomato, mozzarella, and basil to represent the Italian flag — was reportedly created in 1889 for Queen Margherita of Savoy. Naples still fiercely guards the Neapolitan pizza tradition, which has UNESCO cultural heritage status.",
+  "What is the main grain used to make sake?": "Sake is a Japanese rice wine brewed through a fermentation process more similar to beer than wine. Special high-starch rice varieties are used, and the outer layer is polished away before brewing — the more that's polished off, the more refined the sake. Japan has been brewing sake for at least 2,000 years, and it plays a central role in Shinto religious ceremonies.",
+  "Which spice is derived from the Crocus flower?": "Saffron comes from the dried stigmas of the Crocus sativus flower — each flower produces just three stigmas, all harvested by hand. It takes around 150,000 flowers to produce a single kilogram of saffron, which is why it's the world's most expensive spice by weight. It's used to color and flavor dishes from Spanish paella to Milanese risotto to Persian rice.",
+  "What type of pastry is used to make a croissant?": "Croissants are made from puff pastry — specifically laminated dough, created by repeatedly folding butter into dough to create hundreds of paper-thin layers that puff up during baking. Despite being synonymous with France, the croissant likely originated in Vienna, Austria, modeled on the crescent-shaped 'kipferl.' French bakers adopted and refined it in the 19th century.",
+  "Which country produces the most coffee in the world?": "Brazil has been the world's largest coffee producer for over 150 years, accounting for roughly a third of global coffee production. The country's vast size, varied climate, and extensive agricultural infrastructure allow it to grow both arabica and robusta beans at enormous scale. Coffee was introduced to Brazil in the early 1700s and quickly became the backbone of its economy.",
+  "What is the Japanese word for raw fish served on rice?": "Sushi refers specifically to vinegared rice combined with various toppings or fillings — raw fish (sashimi) is just one option. Sushi originated in Southeast Asia as a method of preserving fish in fermented rice, with the modern Tokyo-style nigiri sushi (a hand-pressed rice ball topped with fish) developed in the early 19th century. It became a global phenomenon in the late 20th century.",
+  "Which nut is used to make marzipan?": "Marzipan is made from ground almonds, sugar, and sometimes egg whites. Its origins are debated — both Lübeck in Germany and Toledo in Spain claim to have invented it, as do various Middle Eastern cultures. The finest marzipan is still made in Lübeck, where by law it must contain at least 70% almonds. It is used in everything from wedding cakes to elaborate sculpted confections.",
+  "Which country is home to the kangaroo?": "Kangaroos are native to Australia and are found nowhere else in the wild. They are marsupials, meaning they carry their underdeveloped young (joeys) in a pouch after a very short gestation of about 33 days. A red kangaroo can leap 9 meters in a single bound and reach speeds of 56 km/h. There are more kangaroos in Australia than there are people — roughly twice as many.",
+  "What is the fastest land animal?": "The cheetah can reach speeds of up to 120 km/h in short bursts, accelerating from 0 to 100 km/h in about 3 seconds — faster than most sports cars. Unlike other big cats, cheetahs cannot roar; they purr instead. Their distinctive black 'tear marks' running from their eyes to their mouth reduce sun glare and help them focus on prey during daytime hunts.",
+  "How many hearts does an octopus have?": "Octopuses have three hearts: two branchial hearts pump blood through the gills, while a third systemic heart pumps oxygenated blood through the body. Their blood is blue because it uses copper-based hemocyanin rather than the iron-based hemoglobin that makes human blood red. Octopuses are also remarkably intelligent — they can solve puzzles, use tools, and even recognize individual human faces.",
+  "What is the largest living structure on Earth?": "The Great Barrier Reef stretches over 2,300 kilometers along Australia's northeast coast and is the world's largest living structure, visible from space. It is home to over 1,500 species of fish, 4,000 types of mollusc, and 600 species of coral. Since 2016, successive marine heatwaves have caused mass coral bleaching events that have damaged over half the reef.",
+  "Which animal has the longest lifespan?": "The Greenland shark is believed to be the longest-lived vertebrate on Earth, with scientists estimating lifespans of up to 500 years based on radiocarbon dating of their eye lenses. They grow just 1 centimeter per year, don't reach sexual maturity until around age 150, and live in the cold, deep waters of the North Atlantic and Arctic. They are almost entirely blind due to parasites on their eyes.",
+  "What percentage of Earth's water is fresh water?": "Only about 3% of Earth's water is freshwater — and of that, roughly 69% is locked in glaciers and ice caps, 30% is groundwater, and less than 1% is in rivers, lakes, and accessible surface water. That tiny fraction sustains virtually all terrestrial life. By 2025, the UN estimates that two-thirds of the world's population could face water-stressed conditions.",
+  "Which bird cannot fly but is an excellent swimmer?": "Penguins evolved their flippers from wings over millions of years, trading the ability to fly for extraordinary swimming ability — they can reach speeds of 36 km/h underwater and dive to depths of over 500 meters. Emperor penguins breed in Antarctica in temperatures as low as -60°C, with males incubating eggs on their feet through the polar winter for over two months without eating.",
+  "What is the world's largest rainforest?": "The Amazon rainforest covers over 5.5 million square kilometers across nine South American countries, with about 60% in Brazil. It produces roughly 20% of the world's oxygen and is home to an estimated 10% of all species on Earth. The Amazon River, which runs through it, discharges more water into the ocean than the next seven largest rivers combined.",
+  "Who co-founded Apple with Steve Jobs?": "Steve Wozniak designed the original Apple I and Apple II computers almost entirely by himself, while Jobs handled marketing and business. Wozniak was the engineering genius; Jobs was the visionary salesman. After leaving Apple, Wozniak donated much of his wealth to public school computer labs. He later said his favorite Apple product was the original Macintosh.",
+  "What does HTTP stand for?": "HyperText Transfer Protocol is the foundation of data communication on the World Wide Web, defining how messages are formatted and transmitted between browsers and servers. It was invented by Tim Berners-Lee at CERN in 1989, along with HTML and URLs. HTTPS (the 'S' is for Secure) encrypts the connection using TLS, which is why your browser shows a padlock icon on secure sites.",
+  "In what year was the first iPhone released?": "Steve Jobs unveiled the original iPhone on January 9, 2007, describing it as 'an iPod, a phone, and an internet communicator' in one device. It went on sale on June 29, 2007. The iPhone revolutionized the mobile industry, effectively killing the physical keyboard phone and transforming Apple from a computer company into the world's most valuable company.",
+  "What programming language was created by Guido van Rossum?": "Guido van Rossum created Python in the late 1980s and released it in 1991, naming it after Monty Python's Flying Circus rather than the snake. It was designed to be readable and beginner-friendly. Today Python is one of the world's most popular programming languages, powering everything from Instagram and YouTube to NASA's scientific computing and most modern AI and machine learning systems.",
+  "What does CPU stand for?": "The Central Processing Unit is the primary component of a computer that executes instructions — essentially the brain. Modern CPUs can perform billions of calculations per second and contain billions of transistors on a chip the size of a fingernail. Intel introduced the first commercial single-chip microprocessor, the 4004, in 1971; today's chips are millions of times more powerful.",
+  "Which company developed the Android operating system?": "Android was created by Android Inc., a small startup founded in 2003, which Google acquired in 2005 for around $50 million — one of the great bargains in tech history. Google released it as an open-source operating system in 2008. Android now powers about 72% of the world's smartphones, making it by far the most widely used mobile operating system on Earth.",
+  "What is the name of the world's first computer bug — a literal one?": "On September 9, 1947, engineers working on the Harvard Mark II computer at Harvard found a moth trapped in a relay, causing a malfunction. Grace Hopper's team taped it into the logbook with the note 'First actual case of bug being found.' The word 'bug' for a technical glitch had been used informally before, but this incident cemented it in computing culture forever."
+};
+
+  missedList.forEach((m,i)=>{
+    const el=$(`exp-${i}`);
+    if(el){
+      const exp = EXPLAINERS[m.question] || `The correct answer is "${m.correctAnswer}."`;
+      el.textContent = exp;
+      el.className = "missed-exp";
+    }
+  });
+}
+
+$("btn-start").onclick=startGame;
+$("btn-again").onclick=()=>{
+  $("mast-eyebrow").textContent="Daily Edition · General Knowledge";
+  $("btn-start").disabled=false;
+  $("btn-start").textContent="Start";
+  showPage("pg-start");
+};
+
+// Tutorial: show once per device
+function maybeShowTutorial() {
+  try {
+    if (!localStorage.getItem("tnt_tutorial_seen")) {
+      const overlay = $("tutorial-overlay");
+      overlay.style.display = "flex";
+      $("tut-btn").onclick = () => {
+        overlay.style.animation = "none";
+        overlay.style.opacity = "0";
+        overlay.style.transition = "opacity 0.25s ease";
+        setTimeout(() => { overlay.style.display = "none"; overlay.style.opacity = ""; overlay.style.transition = ""; }, 250);
+        try { localStorage.setItem("tnt_tutorial_seen","1"); } catch(e){}
+      };
+    }
+  } catch(e) {}
+}
+maybeShowTutorial();
+</script>
+
+<!-- TUTORIAL OVERLAY -->
+<div id="tutorial-overlay" style="display:none;">
+  <div id="tutorial-card">
+    <div class="tut-rule"></div>
+    <div class="tut-title">How to Play</div>
+    <div class="tut-steps">
+      <div class="tut-step">
+        <div class="tut-icon">?</div>
+        <div class="tut-step-text">
+          <div class="tut-step-head">Answer questions</div>
+          <div class="tut-step-body">Tap an answer. Questions keep coming — no timer, no pressure.</div>
+        </div>
+      </div>
+      <div class="tut-step">
+        <div class="tut-icon">●●●</div>
+        <div class="tut-step-text">
+          <div class="tut-step-head">Three lives</div>
+          <div class="tut-step-body">Miss three and your session ends. The dots at the top track your lives.</div>
+        </div>
+      </div>
+      <div class="tut-step">
+        <div class="tut-icon">✦</div>
+        <div class="tut-step-text">
+          <div class="tut-step-head">Learn something new</div>
+          <div class="tut-step-body">When you're done, every missed question gets a short explanation — the three new things you're taking away.</div>
+        </div>
+      </div>
+    </div>
+    <button id="tut-btn">Got it — let's play</button>
+  </div>
+</div>
+
+</body>
+</html>
