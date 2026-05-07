@@ -295,6 +295,150 @@ body{
   padding: 15px 24px;
   cursor: pointer;
 }
+
+/* ── DAILY LOCK SCREEN ── */
+.pg-daily {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  min-height: 60vh;
+  padding: 40px 26px;
+  text-align: center;
+}
+.daily-icon {
+  font-size: 36px;
+  margin-bottom: 20px;
+  opacity: 0.4;
+}
+.daily-head {
+  font-family: 'Playfair Display', Georgia, serif;
+  font-size: clamp(24px, 6vw, 36px);
+  font-weight: 700;
+  color: #2a2520;
+  margin-bottom: 12px;
+  line-height: 1.2;
+}
+.daily-sub {
+  font-size: 14px;
+  line-height: 1.75;
+  color: #6b6058;
+  font-style: italic;
+  margin-bottom: 28px;
+}
+.daily-countdown {
+  font-family: 'IBM Plex Mono', monospace;
+  font-size: 11px;
+  letter-spacing: 0.2em;
+  color: #a89e8e;
+  text-transform: uppercase;
+  margin-bottom: 32px;
+}
+.daily-countdown b {
+  color: #2a2520;
+  font-style: normal;
+}
+.week-grid {
+  display: grid;
+  grid-template-columns: repeat(7, 1fr);
+  gap: 6px;
+  width: 100%;
+  max-width: 320px;
+  margin: 0 auto 32px;
+}
+.week-day {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 5px;
+}
+.week-day-label {
+  font-family: 'IBM Plex Mono', monospace;
+  font-size: 8px;
+  letter-spacing: 0.1em;
+  color: #a89e8e;
+  text-transform: uppercase;
+}
+.week-day-dot {
+  width: 28px;
+  height: 28px;
+  border-radius: 50%;
+  border: 1.5px solid #ddd6c8;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 11px;
+  color: #a89e8e;
+  font-family: 'IBM Plex Mono', monospace;
+}
+.week-day-dot.played {
+  background: #2a2520;
+  border-color: #2a2520;
+  color: #f7f3ec;
+}
+.week-day-dot.today {
+  border-color: #2a2520;
+  color: #2a2520;
+  font-weight: 600;
+}
+.week-day-dot.sunday-ready {
+  background: #9e3020;
+  border-color: #9e3020;
+  color: #f7f3ec;
+}
+
+/* ── USERNAME PROMPT ── */
+.username-wrap {
+  padding: 32px 0;
+  border-top: 1px solid #ddd6c8;
+  margin-top: 24px;
+  width: 100%;
+  text-align: left;
+}
+.username-label {
+  font-family: 'IBM Plex Mono', monospace;
+  font-size: 8.5px;
+  letter-spacing: 0.28em;
+  color: #a89e8e;
+  text-transform: uppercase;
+  margin-bottom: 10px;
+  display: block;
+}
+.username-input {
+  width: 100%;
+  background: transparent;
+  border: none;
+  border-bottom: 1.5px solid #b8b0a0;
+  color: #2a2520;
+  font-family: 'Playfair Display', Georgia, serif;
+  font-size: 20px;
+  padding: 8px 0;
+  outline: none;
+  transition: border-color 0.2s;
+}
+.username-input:focus { border-color: #2a2520; }
+.username-note {
+  font-family: 'IBM Plex Mono', monospace;
+  font-size: 8.5px;
+  color: #a89e8e;
+  margin-top: 7px;
+  letter-spacing: 0.05em;
+}
+
+/* Weekly summary on results */
+.week-summary {
+  margin-bottom: 24px;
+  padding-bottom: 24px;
+  border-bottom: 1px solid #ddd6c8;
+}
+.week-summary-label {
+  font-family: 'IBM Plex Mono', monospace;
+  font-size: 8.5px;
+  letter-spacing: 0.28em;
+  color: #a89e8e;
+  text-transform: uppercase;
+  margin-bottom: 14px;
+}
 </style>
 </head>
 <body>
@@ -362,6 +506,31 @@ body{
   </div>
 </div>
 <div id="answer-flash"></div>
+<!-- DAILY LOCK PAGE -->
+<div class="page" id="pg-daily">
+  <div class="pg-daily">
+    <div class="daily-icon">◷</div>
+    <div class="daily-head" id="daily-head">You've played today.</div>
+    <div class="daily-sub" id="daily-sub">Come back tomorrow for a fresh set of questions.</div>
+    <div class="daily-countdown" id="daily-countdown"></div>
+    <div class="week-grid" id="week-grid-daily"></div>
+    <div style="font-family:'IBM Plex Mono',monospace;font-size:8.5px;letter-spacing:.2em;color:#a89e8e;text-transform:uppercase;text-align:center;" id="daily-week-label"></div>
+  </div>
+</div>
+
+<!-- USERNAME PAGE -->
+<div class="page" id="pg-username">
+  <div style="padding:40px 26px 64px;">
+    <div style="font-family:'IBM Plex Mono',monospace;font-size:8.5px;letter-spacing:.32em;color:#9e3020;text-transform:uppercase;margin-bottom:10px;">Welcome</div>
+    <div style="font-family:'Playfair Display',Georgia,serif;font-size:clamp(26px,7vw,38px);font-weight:700;line-height:1.15;color:#2a2520;margin-bottom:12px;">What should we call you?</div>
+    <div style="font-size:14px;line-height:1.75;color:#6b6058;font-style:italic;margin-bottom:32px;">Your name appears on the leaderboard. You can't change it later.</div>
+    <label class="username-label">Your name</label>
+    <input class="username-input" id="username-input" type="text" placeholder="e.g. Alex" maxlength="20" autocomplete="off"/>
+    <div class="username-note">Shown publicly on the leaderboard.</div>
+    <button class="btn-main" id="btn-username" style="margin-top:28px;">Let's Play →</button>
+  </div>
+</div>
+
 
 <!-- RESULTS -->
 <div class="page" id="pg-results">
@@ -959,7 +1128,9 @@ function cardSwipeThen(callback) {
 
 // ── RESULTS ──
 async function showResults() {
+  saveSessionResult({ correct, bestStreak, missed: missedList });
   showPage("pg-results");
+  renderWeekSummaryOnResults();
   const pct = qNum>0?Math.round(correct/qNum*100):0;
   $("res-head").textContent = pct>=80?"Exceptional Run":pct>=60?"Solid Knowledge":pct>=40?"Room to Grow":"Tough Session";
   $("res-sub").textContent = `${correct} of ${qNum} correct — ${pct}% accuracy`;
@@ -1093,13 +1264,262 @@ async function showResults() {
   });
 }
 
-$("btn-start").onclick=startGame;
-$("btn-again").onclick=()=>{
-  $("mast-eyebrow").textContent="Daily Edition · General Knowledge";
-  $("btn-start").disabled=false;
-  $("btn-start").textContent="Start";
+$("btn-start").onclick = () => {
+  if (!getUsername()) {
+    showUsernamePrompt(() => checkDailyAndStart());
+    return;
+  }
+  checkDailyAndStart();
+};
+
+function checkDailyAndStart() {
+  if (hasPlayedToday()) {
+    showDailyLock();
+    return;
+  }
+  startGame();
+}
+
+$("btn-again").onclick = () => {
+  $("mast-eyebrow").textContent = "Daily Edition · General Knowledge";
+  $("btn-start").disabled = false;
+  $("btn-start").textContent = "Start";
   showPage("pg-start");
 };
+
+
+// ══════════════════════════════════════════════════
+// DAILY SYSTEM
+// ══════════════════════════════════════════════════
+
+const DAY_NAMES = ['Sun','Mon','Tue','Wed','Thu','Fri','Sat'];
+const STORAGE_KEYS = {
+  username:    'tnt_username',
+  weekData:    'tnt_week_data',   // {weekStart, days: [{date,correct,missed:[],streak,played}]}
+  todayPlayed: 'tnt_today_played',
+  tutorial:    'tnt_tutorial_seen',
+};
+
+function getToday() {
+  const d = new Date();
+  return `${d.getFullYear()}-${String(d.getMonth()+1).padStart(2,'0')}-${String(d.getDate()).padStart(2,'0')}`;
+}
+
+function getDayOfWeek() { return new Date().getDay(); } // 0=Sun, 1=Mon...
+
+function getWeekStart() {
+  const d = new Date();
+  const day = d.getDay(); // 0=Sun
+  const diff = day === 0 ? -6 : 1 - day; // go back to Monday
+  const monday = new Date(d);
+  monday.setDate(d.getDate() + diff);
+  return `${monday.getFullYear()}-${String(monday.getMonth()+1).padStart(2,'0')}-${String(monday.getDate()).padStart(2,'0')}`;
+}
+
+function loadWeekData() {
+  try {
+    const raw = localStorage.getItem(STORAGE_KEYS.weekData);
+    if (!raw) return null;
+    const data = JSON.parse(raw);
+    // Check if it's the current week
+    if (data.weekStart !== getWeekStart()) return null;
+    return data;
+  } catch(e) { return null; }
+}
+
+function initWeekData() {
+  const weekStart = getWeekStart();
+  return { weekStart, days: [] };
+}
+
+function saveWeekData(data) {
+  try { localStorage.setItem(STORAGE_KEYS.weekData, JSON.stringify(data)); } catch(e) {}
+}
+
+function getTodayEntry(weekData) {
+  const today = getToday();
+  return weekData.days.find(d => d.date === today) || null;
+}
+
+function hasPlayedToday() {
+  const weekData = loadWeekData();
+  if (!weekData) return false;
+  const entry = getTodayEntry(weekData);
+  return entry && entry.played;
+}
+
+function isSunday() { return getDayOfWeek() === 0; }
+
+function hasSundayCrossword() {
+  // Sunday AND has at least 3 days of misses from the week
+  if (!isSunday()) return false;
+  const weekData = loadWeekData();
+  if (!weekData) return false;
+  const allMisses = weekData.days.flatMap(d => d.missed || []);
+  return allMisses.length >= 3;
+}
+
+function saveSessionResult(sessionData) {
+  // sessionData: {correct, bestStreak, missed: [{question, correctAnswer, topic}]}
+  let weekData = loadWeekData() || initWeekData();
+  const today = getToday();
+  // Remove existing entry for today if any
+  weekData.days = weekData.days.filter(d => d.date !== today);
+  weekData.days.push({
+    date: today,
+    dayOfWeek: getDayOfWeek(),
+    correct: sessionData.correct,
+    streak: sessionData.bestStreak,
+    missed: sessionData.missed,
+    played: true,
+  });
+  saveWeekData(weekData);
+}
+
+function getWeeklyStats() {
+  const weekData = loadWeekData();
+  if (!weekData || !weekData.days.length) return null;
+  const totalCorrect = weekData.days.reduce((s, d) => s + (d.correct || 0), 0);
+  const bestStreak = Math.max(...weekData.days.map(d => d.streak || 0));
+  const allMisses = weekData.days.flatMap(d => d.missed || []);
+  return { totalCorrect, bestStreak, allMisses, daysPlayed: weekData.days.length };
+}
+
+// Countdown to midnight
+function startCountdown() {
+  function update() {
+    const now = new Date();
+    const midnight = new Date();
+    midnight.setHours(24, 0, 0, 0);
+    const diff = midnight - now;
+    const h = Math.floor(diff / 3600000);
+    const m = Math.floor((diff % 3600000) / 60000);
+    const s = Math.floor((diff % 60000) / 1000);
+    const el = $('daily-countdown');
+    if (el) el.innerHTML = `Next edition in <b>${String(h).padStart(2,'0')}:${String(m).padStart(2,'0')}:${String(s).padStart(2,'0')}</b>`;
+  }
+  update();
+  setInterval(update, 1000);
+}
+
+function renderWeekGrid(containerId) {
+  const container = $(containerId);
+  if (!container) return;
+  const weekData = loadWeekData() || { days: [] };
+  const today = getToday();
+  const dayOfWeek = getDayOfWeek();
+
+  // Build Mon-Sun grid
+  const days = ['Mon','Tue','Wed','Thu','Fri','Sat','Sun'];
+  container.innerHTML = '';
+  days.forEach((label, i) => {
+    const dayIndex = i === 6 ? 0 : i + 1; // Mon=1...Sun=0
+    const entry = weekData.days.find(d => d.dayOfWeek === dayIndex);
+    const isToday = new Date().getDay() === dayIndex;
+
+    const cell = document.createElement('div');
+    cell.className = 'week-day';
+
+    const dot = document.createElement('div');
+    dot.className = 'week-day-dot';
+
+    if (entry && entry.played) {
+      dot.classList.add('played');
+      dot.textContent = entry.correct;
+    } else if (dayIndex === 0 && hasSundayCrossword()) {
+      dot.classList.add('sunday-ready');
+      dot.textContent = '✦';
+    } else if (isToday) {
+      dot.classList.add('today');
+      dot.textContent = '·';
+    } else {
+      dot.textContent = '·';
+    }
+
+    const lbl = document.createElement('div');
+    lbl.className = 'week-day-label';
+    lbl.textContent = label;
+
+    cell.appendChild(dot);
+    cell.appendChild(lbl);
+    container.appendChild(cell);
+  });
+}
+
+function showDailyLock() {
+  showPage('pg-daily');
+  startCountdown();
+  renderWeekGrid('week-grid-daily');
+
+  const weekData = loadWeekData();
+  const today = getToday();
+  const entry = weekData ? getTodayEntry(weekData) : null;
+
+  if (entry) {
+    $('daily-head').textContent = `Today's session is complete.`;
+    $('daily-sub').textContent = `You got ${entry.correct} correct. Come back tomorrow for a fresh edition.`;
+  }
+
+  // Weekly label
+  const stats = getWeeklyStats();
+  if (stats) {
+    $('daily-week-label').textContent = `${stats.daysPlayed} of 6 days played this week`;
+  }
+}
+
+// ── USERNAME ──
+function getUsername() {
+  try { return localStorage.getItem(STORAGE_KEYS.username) || ''; } catch(e) { return ''; }
+}
+
+function saveUsername(name) {
+  try { localStorage.setItem(STORAGE_KEYS.username, name); } catch(e) {}
+}
+
+function showUsernamePrompt(onComplete) {
+  showPage('pg-username');
+  const input = $('username-input');
+  const existing = getUsername();
+  if (existing) input.value = existing;
+
+  $('btn-username').onclick = () => {
+    const name = input.value.trim();
+    if (!name) { input.focus(); return; }
+    saveUsername(name);
+    onComplete();
+  };
+  input.onkeydown = (e) => {
+    if (e.key === 'Enter') $('btn-username').click();
+  };
+}
+
+// ── WEEK SUMMARY on results ──
+function renderWeekSummaryOnResults() {
+  const stats = getWeeklyStats();
+  if (!stats || stats.daysPlayed < 2) return; // only show after 2+ days
+
+  // Insert week grid into results page
+  let existing = document.querySelector('.week-summary');
+  if (existing) existing.remove();
+
+  const wrap = document.createElement('div');
+  wrap.className = 'week-summary';
+  wrap.innerHTML = `
+    <div class="week-summary-label">This Week</div>
+    <div class="week-grid" id="week-grid-results" style="max-width:100%;margin-bottom:12px;"></div>
+    <div style="font-family:'IBM Plex Mono',monospace;font-size:9px;letter-spacing:.15em;color:#a89e8e;">
+      ${stats.totalCorrect} correct across ${stats.daysPlayed} days · Best streak: ${stats.bestStreak}
+    </div>
+  `;
+
+  // Insert after stats row, before Three Things
+  const threeThings = document.querySelector('#pg-results [style*="THREE THINGS"]') ||
+    [...document.querySelectorAll('#pg-results div')].find(el => el.textContent.trim() === 'Three Things to Learn');
+  if (threeThings) threeThings.parentNode.insertBefore(wrap, threeThings);
+
+  renderWeekGrid('week-grid-results');
+}
+
 
 // Tutorial: show once per device
 function maybeShowTutorial() {
