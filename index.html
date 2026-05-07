@@ -439,6 +439,63 @@ body{
   text-transform: uppercase;
   margin-bottom: 14px;
 }
+
+/* ── LEADERBOARD ── */
+.lb-row {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  padding: 12px 0;
+  border-bottom: 1px solid #ddd6c8;
+}
+.lb-row:last-child { border-bottom: none; }
+.lb-rank {
+  font-family: 'IBM Plex Mono', monospace;
+  font-size: 11px;
+  color: #a89e8e;
+  width: 20px;
+  flex-shrink: 0;
+  text-align: right;
+}
+.lb-rank.top { color: #9e3020; font-weight: 600; }
+.lb-name {
+  font-family: 'Playfair Display', Georgia, serif;
+  font-size: 15px;
+  font-weight: 600;
+  color: #2a2520;
+  flex: 1;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+.lb-name.me { color: #9e3020; }
+.lb-stats {
+  font-family: 'IBM Plex Mono', monospace;
+  font-size: 9px;
+  letter-spacing: 0.1em;
+  color: #a89e8e;
+  text-align: right;
+  flex-shrink: 0;
+}
+.lb-score {
+  font-family: 'Playfair Display', Georgia, serif;
+  font-size: 17px;
+  font-weight: 700;
+  color: #2a2520;
+  width: 36px;
+  text-align: right;
+  flex-shrink: 0;
+}
+.lb-loading {
+  font-family: 'IBM Plex Mono', monospace;
+  font-size: 9px;
+  letter-spacing: 0.2em;
+  color: #a89e8e;
+  text-transform: uppercase;
+  text-align: center;
+  padding: 20px 0;
+  animation: pulse 1.5s infinite;
+}
 </style>
 </head>
 <body>
@@ -566,6 +623,7 @@ body{
 
   <div style="padding-top:28px;border-top:1px solid #ddd6c8;margin-top:4px;">
     <button class="btn-main" id="btn-again">Play Again →</button>
+    <button onclick="loadAndShowLeaderboard()" style="width:100%;margin-top:12px;background:transparent;border:1px solid #ddd6c8;color:#6b6058;font-family:'IBM Plex Mono',monospace;font-size:10px;letter-spacing:.22em;text-transform:uppercase;padding:13px 24px;cursor:pointer;">View Leaderboard</button>
   </div>
 </div>
 
@@ -1131,6 +1189,9 @@ async function showResults() {
   saveSessionResult({ correct, bestStreak, missed: missedList });
   showPage("pg-results");
   renderWeekSummaryOnResults();
+  // Auto-submit to leaderboard in background
+  const _wStats = getWeeklyStats();
+  if (_wStats) submitToLeaderboard(_wStats).catch(()=>{});
   const pct = qNum>0?Math.round(correct/qNum*100):0;
   $("res-head").textContent = pct>=80?"Exceptional Run":pct>=60?"Solid Knowledge":pct>=40?"Room to Grow":"Tough Session";
   $("res-sub").textContent = `${correct} of ${qNum} correct — ${pct}% accuracy`;
@@ -1538,6 +1599,123 @@ function maybeShowTutorial() {
   } catch(e) {}
 }
 maybeShowTutorial();
+
+// ══════════════════════════════════════════════════
+// LEADERBOARD (JSONBin)
+// ══════════════════════════════════════════════════
+
+// Free JSONBin — stores a shared JSON object
+// Bin ID and Master Key set up for threenewthingsapp
+// JSONBin setup — create free account at jsonbin.io
+// 1. Sign up free at jsonbin.io
+// 2. Create a new bin with content: {"entries":[]}
+// 3. Copy your Master Key from Account > API Keys
+// 4. Paste Bin ID and Master Key below
+const JSONBIN_BIN_ID  = '69fbff12250b1311c31532ac';
+const JSONBIN_API_KEY = '$2a$10$xrLSWlJ/1EZrqdle1sfpYumnXQcu2gIju.8CEZQ40BKl5ghoDR23O';
+
+async function lbFetch(method, body) {
+  const headers = {
+    'Content-Type': 'application/json',
+    'X-Master-Key': JSONBIN_API_KEY,
+    'X-Access-Key': JSONBIN_API_KEY,
+    'X-Bin-Versioning': 'false',
+  };
+  const opts = { method, headers };
+  if (body) opts.body = JSON.stringify(body);
+  const res = await fetch(`https://api.jsonbin.io/v3/b/${JSONBIN_BIN_ID}`, opts);
+  if (!res.ok) throw new Error('LB error ' + res.status);
+  return res.json();
+}
+
+async function submitToLeaderboard(weeklyStats) {
+  const username = getUsername();
+  if (!username || !weeklyStats) return;
+
+  try {
+    // GET current leaderboard
+    const data = await lbFetch('GET');
+    const entries = data.record?.entries || [];
+
+    // Find or create entry for this user + this week
+    const weekStart = getWeekStart();
+    const idx = entries.findIndex(e => e.username === username && e.weekStart === weekStart);
+
+    const entry = {
+      username,
+      weekStart,
+      correct: weeklyStats.totalCorrect,
+      streak: weeklyStats.bestStreak,
+      daysPlayed: weeklyStats.daysPlayed,
+      updatedAt: Date.now(),
+    };
+
+    if (idx >= 0) entries[idx] = entry;
+    else entries.push(entry);
+
+    // Keep only current week + trim to 200 entries
+    const currentWeek = entries.filter(e => e.weekStart === weekStart)
+      .sort((a, b) => b.correct - a.correct)
+      .slice(0, 200);
+
+    await lbFetch('PUT', { entries: currentWeek });
+  } catch(e) {
+    console.log('Leaderboard submit failed silently:', e.message);
+  }
+}
+
+async function loadAndShowLeaderboard() {
+  showPage('pg-leaderboard');
+  const list = $('lb-list');
+  const yourRank = $('lb-your-rank');
+  list.innerHTML = '<div class="lb-loading">Loading…</div>';
+  yourRank.textContent = '';
+
+  // Submit latest stats first
+  const stats = getWeeklyStats();
+  if (stats) submitToLeaderboard(stats).catch(() => {});
+
+  try {
+    const data = await lbFetch('GET');
+    const weekStart = getWeekStart();
+    const username = getUsername();
+    const entries = (data.record?.entries || [])
+      .filter(e => e.weekStart === weekStart)
+      .sort((a, b) => b.correct - a.correct || b.streak - a.streak);
+
+    if (!entries.length) {
+      list.innerHTML = '<div class="lb-loading">No scores yet this week.<br>You could be first!</div>';
+      return;
+    }
+
+    list.innerHTML = '';
+    entries.forEach((e, i) => {
+      const isMe = e.username === username;
+      const row = document.createElement('div');
+      row.className = 'lb-row';
+      const medal = i === 0 ? '◆' : i === 1 ? '◇' : i === 2 ? '○' : String(i + 1);
+      row.innerHTML = `
+        <div class="lb-rank ${i < 3 ? 'top' : ''}">${medal}</div>
+        <div class="lb-name ${isMe ? 'me' : ''}">${e.username}${isMe ? ' ←' : ''}</div>
+        <div class="lb-stats">${e.daysPlayed}d · ${e.streak}🔥</div>
+        <div class="lb-score">${e.correct}</div>
+      `;
+      list.appendChild(row);
+
+      if (isMe) {
+        yourRank.textContent = `You are ranked #${i + 1} of ${entries.length} players this week`;
+      }
+    });
+
+    if (!entries.find(e => e.username === username)) {
+      yourRank.textContent = 'Complete a session to appear on the leaderboard';
+    }
+
+  } catch(e) {
+    list.innerHTML = '<div class="lb-loading">Could not load leaderboard.</div>';
+  }
+}
+
 </script>
 
 <!-- TUTORIAL OVERLAY -->
@@ -1569,6 +1747,25 @@ maybeShowTutorial();
       </div>
     </div>
     <button id="tut-btn">Got it — let's play</button>
+  </div>
+</div>
+
+
+<!-- LEADERBOARD PAGE -->
+<div class="page" id="pg-leaderboard">
+  <div style="padding:0 26px 64px;">
+    <div style="padding:24px 0 16px;border-bottom:1px solid #ddd6c8;margin-bottom:24px;display:flex;align-items:baseline;justify-content:space-between;">
+      <div>
+        <div style="font-family:'IBM Plex Mono',monospace;font-size:8.5px;letter-spacing:.32em;color:#a89e8e;text-transform:uppercase;margin-bottom:6px;">This Week</div>
+        <div style="font-family:'Playfair Display',Georgia,serif;font-size:28px;font-weight:700;color:#2a2520;">Leaderboard</div>
+      </div>
+      <button onclick="showPage('pg-results')" style="background:transparent;border:none;font-family:'IBM Plex Mono',monospace;font-size:9px;letter-spacing:.2em;color:#a89e8e;text-transform:uppercase;cursor:pointer;padding:8px 0;">← Back</button>
+    </div>
+    <div style="font-family:'IBM Plex Mono',monospace;font-size:8.5px;letter-spacing:.2em;color:#a89e8e;text-transform:uppercase;margin-bottom:14px;">Ranked by weekly correct answers</div>
+    <div id="lb-list"><div class="lb-loading">Loading…</div></div>
+    <div style="margin-top:24px;padding-top:16px;border-top:1px solid #ddd6c8;">
+      <div id="lb-your-rank" style="font-family:'IBM Plex Mono',monospace;font-size:9px;letter-spacing:.15em;color:#a89e8e;text-align:center;"></div>
+    </div>
   </div>
 </div>
 
