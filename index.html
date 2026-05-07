@@ -497,7 +497,7 @@ async function callClaude(prompt, maxTokens=1400) {
         "anthropic-dangerous-direct-browser-access": "true",
       },
       body,
-    }), 8000);
+    }), 2500);
     if (!res.ok) throw new Error(`HTTP ${res.status}`);
     const data = await res.json();
     const text = data.content?.find(b=>b.type==="text")?.text;
@@ -517,7 +517,7 @@ async function callClaude(prompt, maxTokens=1400) {
         "anthropic-version": "2023-06-01",
       },
       body,
-    }), 8000);
+    }), 2500);
     if (!res.ok) throw new Error(`HTTP ${res.status}`);
     const data = await res.json();
     const text = data.content?.find(b=>b.type==="text")?.text;
@@ -727,7 +727,7 @@ async function startGame() {
     // Race: fetch batch vs 10s timeout fallback
     await Promise.race([
       fetchBatch(),
-      new Promise(resolve => setTimeout(() => { fetchFromLocalBank(); resolve(); }, 10000))
+      new Promise(resolve => setTimeout(() => { fetchFromLocalBank(); resolve(); }, 3000))
     ]);
     if (!queue.length) fetchFromLocalBank();
     showPage("pg-question");
