@@ -571,7 +571,8 @@ body{
     <div class="daily-sub" id="daily-sub">Come back tomorrow for a fresh set of questions.</div>
     <div class="daily-countdown" id="daily-countdown"></div>
     <div class="week-grid" id="week-grid-daily"></div>
-    <div style="font-family:'IBM Plex Mono',monospace;font-size:8.5px;letter-spacing:.2em;color:#a89e8e;text-transform:uppercase;text-align:center;" id="daily-week-label"></div>
+    <div style="font-family:'IBM Plex Mono',monospace;font-size:8.5px;letter-spacing:.2em;color:#a89e8e;text-transform:uppercase;text-align:center;margin-bottom:28px;" id="daily-week-label"></div>
+    <button onclick="loadAndShowLeaderboard('pg-daily')" style="width:100%;max-width:320px;background:#2a2520;border:none;color:#f7f3ec;font-family:'Playfair Display',Georgia,serif;font-size:17px;font-style:italic;padding:14px 24px;cursor:pointer;">View Leaderboard →</button>
   </div>
 </div>
 
@@ -724,7 +725,7 @@ async function callClaude(prompt, maxTokens=1400) {
         "anthropic-dangerous-direct-browser-access": "true",
       },
       body,
-    }), 2500);
+    }), 12000);
     if (!res.ok) throw new Error(`HTTP ${res.status}`);
     const data = await res.json();
     const text = data.content?.find(b=>b.type==="text")?.text;
@@ -744,7 +745,7 @@ async function callClaude(prompt, maxTokens=1400) {
         "anthropic-version": "2023-06-01",
       },
       body,
-    }), 2500);
+    }), 12000);
     if (!res.ok) throw new Error(`HTTP ${res.status}`);
     const data = await res.json();
     const text = data.content?.find(b=>b.type==="text")?.text;
@@ -866,6 +867,134 @@ const QUESTION_BANK = [
   {question:"What does CPU stand for?",options:["Central Processing Unit","Computer Power Unit","Central Program Utility","Core Processing Unit"],answer:"Central Processing Unit",topic:"Technology"},
   {question:"Which company developed the Android operating system?",options:["Apple","Microsoft","Samsung","Google"],answer:"Google",topic:"Technology"},
   {question:"What is the name of the world's first computer bug — a literal one?",options:["A moth","A beetle","A fly","A cockroach"],answer:"A moth",topic:"Technology"},
+
+  // HISTORY - Extra
+  {question:"Who was known as the 'Maid of Orleans'?",options:["Catherine of Aragon","Joan of Arc","Marie Antoinette","Eleanor of Aquitaine"],answer:"Joan of Arc",topic:"History"},
+  {question:"Which ancient civilization built Machu Picchu?",options:["Aztec","Maya","Inca","Olmec"],answer:"Inca",topic:"History"},
+  {question:"What ship did Charles Darwin sail on during his famous voyage?",options:["HMS Victory","HMS Endeavour","HMS Beagle","HMS Bounty"],answer:"HMS Beagle",topic:"History"},
+  {question:"In which city was President Kennedy assassinated?",options:["Houston","Dallas","Austin","San Antonio"],answer:"Dallas",topic:"History"},
+  {question:"Which country was the first to use paper money?",options:["Japan","Egypt","India","China"],answer:"China",topic:"History"},
+  {question:"What was the name of the first artificial satellite launched into space?",options:["Vostok","Explorer 1","Sputnik","Luna 1"],answer:"Sputnik",topic:"History"},
+  {question:"Which empire was known as the 'Empire on which the sun never sets'?",options:["French Empire","Spanish Empire","British Empire","Ottoman Empire"],answer:"British Empire",topic:"History"},
+  {question:"Who invented the telephone?",options:["Thomas Edison","Nikola Tesla","Alexander Graham Bell","Guglielmo Marconi"],answer:"Alexander Graham Bell",topic:"History"},
+  {question:"In what year did the United States declare independence?",options:["1774","1775","1776","1777"],answer:"1776",topic:"History"},
+  {question:"Which battle ended Napoleon's rule?",options:["Battle of Austerlitz","Battle of Trafalgar","Battle of Waterloo","Battle of Leipzig"],answer:"Battle of Waterloo",topic:"History"},
+  {question:"Who was the first female Prime Minister of the United Kingdom?",options:["Queen Victoria","Margaret Thatcher","Theresa May","Indira Gandhi"],answer:"Margaret Thatcher",topic:"History"},
+  {question:"What ancient wonder stood at the entrance of the harbor of Rhodes?",options:["Lighthouse of Alexandria","Colossus of Rhodes","Temple of Artemis","Statue of Zeus"],answer:"Colossus of Rhodes",topic:"History"},
+  // SCIENCE - Extra
+  {question:"What is the most abundant element in the universe?",options:["Oxygen","Carbon","Helium","Hydrogen"],answer:"Hydrogen",topic:"Science"},
+  {question:"What is the name of the process by which plants make food?",options:["Respiration","Fermentation","Photosynthesis","Osmosis"],answer:"Photosynthesis",topic:"Science"},
+  {question:"How many planets are in our solar system?",options:["7","8","9","10"],answer:"8",topic:"Science"},
+  {question:"What is the boiling point of water in Celsius?",options:["90","95","100","105"],answer:"100",topic:"Science"},
+  {question:"What part of the cell contains DNA?",options:["Cytoplasm","Mitochondria","Nucleus","Ribosome"],answer:"Nucleus",topic:"Science"},
+  {question:"What is the chemical symbol for iron?",options:["Ir","Fe","In","Fo"],answer:"Fe",topic:"Science"},
+  {question:"Which planet has the most moons?",options:["Jupiter","Saturn","Uranus","Neptune"],answer:"Saturn",topic:"Science"},
+  {question:"What is the name of the galaxy that contains our solar system?",options:["Andromeda","Triangulum","Milky Way","Whirlpool"],answer:"Milky Way",topic:"Science"},
+  {question:"What is the atomic number of carbon?",options:["4","6","8","12"],answer:"6",topic:"Science"},
+  {question:"Which scientist developed the theory of general relativity?",options:["Isaac Newton","Niels Bohr","Albert Einstein","Stephen Hawking"],answer:"Albert Einstein",topic:"Science"},
+  {question:"What is the largest organ in the human body?",options:["Liver","Brain","Heart","Skin"],answer:"Skin",topic:"Science"},
+  {question:"What type of rock is formed from cooled lava?",options:["Sedimentary","Metamorphic","Igneous","Limestone"],answer:"Igneous",topic:"Science"},
+  {question:"What is the name of the force that opposes motion?",options:["Gravity","Friction","Tension","Inertia"],answer:"Friction",topic:"Science"},
+  // GEOGRAPHY - Extra
+  {question:"Which is the world's largest desert?",options:["Sahara","Arabian","Gobi","Antarctic"],answer:"Antarctic",topic:"Geography"},
+  {question:"What is the capital of Brazil?",options:["Rio de Janeiro","Sao Paulo","Brasilia","Salvador"],answer:"Brasilia",topic:"Geography"},
+  {question:"Which country has the longest coastline in the world?",options:["Russia","Australia","Norway","Canada"],answer:"Canada",topic:"Geography"},
+  {question:"What is the deepest lake in the world?",options:["Caspian Sea","Lake Superior","Lake Baikal","Lake Tanganyika"],answer:"Lake Baikal",topic:"Geography"},
+  {question:"Which country is both a continent and a country?",options:["Greenland","Iceland","New Zealand","Australia"],answer:"Australia",topic:"Geography"},
+  {question:"What is the capital of Argentina?",options:["Santiago","Lima","Buenos Aires","Montevideo"],answer:"Buenos Aires",topic:"Geography"},
+  {question:"Through how many countries does the Amazon River flow?",options:["2","3","4","5"],answer:"3",topic:"Geography"},
+  {question:"Which US state is the largest by area?",options:["Texas","California","Montana","Alaska"],answer:"Alaska",topic:"Geography"},
+  {question:"What is the official language of Brazil?",options:["Spanish","French","Portuguese","Italian"],answer:"Portuguese",topic:"Geography"},
+  {question:"Which city is known as the 'City of Canals'?",options:["Amsterdam","Stockholm","Venice","Bangkok"],answer:"Venice",topic:"Geography"},
+  {question:"What is the tallest mountain in Africa?",options:["Mount Kenya","Mount Stanley","Mount Kilimanjaro","Ras Dashen"],answer:"Mount Kilimanjaro",topic:"Geography"},
+  {question:"Which country has the most UNESCO World Heritage Sites?",options:["China","France","Spain","Italy"],answer:"Italy",topic:"Geography"},
+  // LITERATURE - Extra
+  {question:"Who wrote 'The Great Gatsby'?",options:["Ernest Hemingway","F. Scott Fitzgerald","William Faulkner","John Steinbeck"],answer:"F. Scott Fitzgerald",topic:"Literature"},
+  {question:"What is the first book of the Bible?",options:["Exodus","Psalms","Genesis","Leviticus"],answer:"Genesis",topic:"Literature"},
+  {question:"Who wrote 'Don Quixote'?",options:["Lope de Vega","Miguel de Cervantes","Francisco de Quevedo","Luis de Gongora"],answer:"Miguel de Cervantes",topic:"Literature"},
+  {question:"In which Dickens novel does the character Ebenezer Scrooge appear?",options:["Oliver Twist","David Copperfield","A Christmas Carol","Bleak House"],answer:"A Christmas Carol",topic:"Literature"},
+  {question:"Who wrote 'War and Peace'?",options:["Fyodor Dostoevsky","Anton Chekhov","Leo Tolstoy","Ivan Turgenev"],answer:"Leo Tolstoy",topic:"Literature"},
+  {question:"What is the name of Harry Potter's owl?",options:["Crookshanks","Hedwig","Errol","Pigwidgeon"],answer:"Hedwig",topic:"Literature"},
+  {question:"Who wrote 'The Canterbury Tales'?",options:["Geoffrey Chaucer","William Langland","John Gower","Thomas Malory"],answer:"Geoffrey Chaucer",topic:"Literature"},
+  {question:"In which Shakespeare play does the ghost of a king appear to his son?",options:["Macbeth","King Lear","Othello","Hamlet"],answer:"Hamlet",topic:"Literature"},
+  {question:"What dystopian novel features a society called Gilead?",options:["1984","Brave New World","The Handmaid's Tale","We"],answer:"The Handmaid's Tale",topic:"Literature"},
+  {question:"Who wrote 'Moby-Dick'?",options:["Nathaniel Hawthorne","Herman Melville","Edgar Allan Poe","Walt Whitman"],answer:"Herman Melville",topic:"Literature"},
+  {question:"What is the subtitle of Mary Shelley's Frankenstein?",options:["The New Prometheus","The Modern Prometheus","The Dark Prometheus","The Lost Prometheus"],answer:"The Modern Prometheus",topic:"Literature"},
+  // MUSIC - Extra
+  {question:"Which composer was deaf when he wrote his Ninth Symphony?",options:["Mozart","Bach","Chopin","Beethoven"],answer:"Beethoven",topic:"Music"},
+  {question:"What instrument is Yo-Yo Ma famous for playing?",options:["Violin","Piano","Cello","Trumpet"],answer:"Cello",topic:"Music"},
+  {question:"Which band was Mick Jagger the frontman of?",options:["The Who","Led Zeppelin","The Rolling Stones","The Kinks"],answer:"The Rolling Stones",topic:"Music"},
+  {question:"What does the musical term 'forte' mean?",options:["Slow","Loud","Soft","Fast"],answer:"Loud",topic:"Music"},
+  {question:"In what decade did Elvis Presley become famous?",options:["1940s","1950s","1960s","1970s"],answer:"1950s",topic:"Music"},
+  {question:"Which country does the music genre 'Fado' originate from?",options:["Spain","Brazil","Argentina","Portugal"],answer:"Portugal",topic:"Music"},
+  {question:"What is the name of Beyonce's alter ego?",options:["Sasha Fierce","Queen B","Yonce","Lemonade"],answer:"Sasha Fierce",topic:"Music"},
+  {question:"Which woodwind instrument is the lowest in pitch?",options:["Oboe","Clarinet","Flute","Bassoon"],answer:"Bassoon",topic:"Music"},
+  {question:"What year was the iconic Woodstock festival held?",options:["1967","1968","1969","1970"],answer:"1969",topic:"Music"},
+  {question:"Which singer is known as the Queen of Soul?",options:["Diana Ross","Tina Turner","Aretha Franklin","Whitney Houston"],answer:"Aretha Franklin",topic:"Music"},
+  // ART - Extra
+  {question:"Which art movement is Pablo Picasso associated with?",options:["Surrealism","Impressionism","Cubism","Expressionism"],answer:"Cubism",topic:"Art"},
+  {question:"What nationality was artist Frida Kahlo?",options:["Brazilian","Colombian","Mexican","Argentine"],answer:"Mexican",topic:"Art"},
+  {question:"Which museum houses Leonardo's The Last Supper?",options:["The Louvre","Uffizi Gallery","Santa Maria delle Grazie","The Vatican"],answer:"Santa Maria delle Grazie",topic:"Art"},
+  {question:"What is the term for a painting done on wet plaster?",options:["Tempera","Fresco","Encaustic","Gouache"],answer:"Fresco",topic:"Art"},
+  {question:"Which artist is known for paintings of Campbell's Soup cans?",options:["Roy Lichtenstein","Jasper Johns","Andy Warhol","Robert Rauschenberg"],answer:"Andy Warhol",topic:"Art"},
+  {question:"What is the name of the famous statue at the entrance of New York harbor?",options:["Statue of Liberty","The Thinker","Lady Justice","Freedom"],answer:"Statue of Liberty",topic:"Art"},
+  {question:"In which city is the Prado Museum located?",options:["Barcelona","Lisbon","Madrid","Seville"],answer:"Madrid",topic:"Art"},
+  {question:"What art style is characterized by small distinct dots of color?",options:["Pointillism","Fauvism","Cubism","Futurism"],answer:"Pointillism",topic:"Art"},
+  // FILM & TV - Extra
+  {question:"Which film won the most Academy Awards ever with 11 Oscars?",options:["Gone with the Wind","Ben-Hur","Titanic","The Lord of the Rings: The Return of the King"],answer:"Ben-Hur",topic:"Film & TV"},
+  {question:"Who played the Joker in The Dark Knight?",options:["Jack Nicholson","Jared Leto","Joaquin Phoenix","Heath Ledger"],answer:"Heath Ledger",topic:"Film & TV"},
+  {question:"What is the highest-grossing film of all time?",options:["Titanic","Avengers: Endgame","Avatar","Star Wars: The Force Awakens"],answer:"Avatar",topic:"Film & TV"},
+  {question:"Which streaming service produced Stranger Things?",options:["HBO","Amazon Prime","Disney+","Netflix"],answer:"Netflix",topic:"Film & TV"},
+  {question:"Who directed Pulp Fiction?",options:["Martin Scorsese","David Fincher","Quentin Tarantino","Joel Coen"],answer:"Quentin Tarantino",topic:"Film & TV"},
+  {question:"In which film does Tom Hanks play a man stranded on a deserted island?",options:["Philadelphia","Forrest Gump","Cast Away","The Green Mile"],answer:"Cast Away",topic:"Film & TV"},
+  {question:"Which TV show is set in the fictional land of Westeros?",options:["The Witcher","Vikings","The Last Kingdom","Game of Thrones"],answer:"Game of Thrones",topic:"Film & TV"},
+  {question:"Who played James Bond in Casino Royale (2006)?",options:["Pierce Brosnan","Roger Moore","Daniel Craig","Timothy Dalton"],answer:"Daniel Craig",topic:"Film & TV"},
+  {question:"What 1975 Spielberg film is often credited with creating the summer blockbuster?",options:["Close Encounters","1941","Jaws","Duel"],answer:"Jaws",topic:"Film & TV"},
+  {question:"Which actress played Katniss Everdeen in The Hunger Games?",options:["Emma Stone","Shailene Woodley","Jennifer Lawrence","Kristen Stewart"],answer:"Jennifer Lawrence",topic:"Film & TV"},
+  // SPORTS - Extra
+  {question:"How long is a standard marathon in kilometers?",options:["40km","41.2km","42.195km","43km"],answer:"42.195km",topic:"Sports"},
+  {question:"Which country has won the most Olympic gold medals overall?",options:["Russia","China","Germany","United States"],answer:"United States",topic:"Sports"},
+  {question:"In golf, what is the term for one stroke under par?",options:["Eagle","Birdie","Bogey","Par"],answer:"Birdie",topic:"Sports"},
+  {question:"How many players are on a baseball team on the field?",options:["8","9","10","11"],answer:"9",topic:"Sports"},
+  {question:"Which boxer was known as 'The Greatest'?",options:["Joe Louis","Sugar Ray Robinson","Muhammad Ali","Mike Tyson"],answer:"Muhammad Ali",topic:"Sports"},
+  {question:"What sport uses a shuttlecock?",options:["Squash","Pickleball","Badminton","Table Tennis"],answer:"Badminton",topic:"Sports"},
+  {question:"How many points is a touchdown worth in American football?",options:["4","5","6","7"],answer:"6",topic:"Sports"},
+  {question:"Which country invented the sport of cricket?",options:["Australia","India","South Africa","England"],answer:"England",topic:"Sports"},
+  {question:"What is the maximum score in a single game of ten-pin bowling?",options:["270","280","290","300"],answer:"300",topic:"Sports"},
+  {question:"In which sport would you perform a 'slam dunk'?",options:["Volleyball","Water Polo","Basketball","Handball"],answer:"Basketball",topic:"Sports"},
+  // FOOD - Extra
+  {question:"What is the main ingredient in hummus?",options:["Lentils","Chickpeas","Fava beans","White beans"],answer:"Chickpeas",topic:"Food"},
+  {question:"Which country is the origin of sushi?",options:["China","Korea","Japan","Vietnam"],answer:"Japan",topic:"Food"},
+  {question:"What type of wine is Champagne?",options:["Red","White","Rose","Sparkling"],answer:"Sparkling",topic:"Food"},
+  {question:"What is the world's most expensive spice by weight?",options:["Vanilla","Cardamom","Saffron","Truffle"],answer:"Saffron",topic:"Food"},
+  {question:"From which animal does prosciutto come?",options:["Cow","Lamb","Pig","Duck"],answer:"Pig",topic:"Food"},
+  {question:"What is the key ingredient that makes bread rise?",options:["Baking powder","Yeast","Salt","Sugar"],answer:"Yeast",topic:"Food"},
+  {question:"Which country is credited with inventing chocolate?",options:["Switzerland","Belgium","Mexico","France"],answer:"Mexico",topic:"Food"},
+  {question:"What is the base of a traditional Hollandaise sauce?",options:["Cream","Butter","Olive oil","Mayonnaise"],answer:"Butter",topic:"Food"},
+  {question:"Which fruit is known as the 'king of fruits' in Southeast Asia?",options:["Mango","Rambutan","Jackfruit","Durian"],answer:"Durian",topic:"Food"},
+  {question:"What type of pasta is shaped like small rice grains?",options:["Orzo","Farfalle","Vermicelli","Fregola"],answer:"Orzo",topic:"Food"},
+  // NATURE - Extra
+  {question:"What is the only mammal capable of true flight?",options:["Flying squirrel","Sugar glider","Bat","Colugo"],answer:"Bat",topic:"Nature"},
+  {question:"How long is an elephant's pregnancy?",options:["12 months","16 months","18 months","22 months"],answer:"22 months",topic:"Nature"},
+  {question:"What is the name of the process by which a caterpillar becomes a butterfly?",options:["Hibernation","Metamorphosis","Evolution","Mutation"],answer:"Metamorphosis",topic:"Nature"},
+  {question:"Which is the largest species of shark?",options:["Great White","Tiger Shark","Bull Shark","Whale Shark"],answer:"Whale Shark",topic:"Nature"},
+  {question:"What do you call a group of lions?",options:["Pack","Herd","Pride","Colony"],answer:"Pride",topic:"Nature"},
+  {question:"Which tree produces acorns?",options:["Maple","Beech","Oak","Chestnut"],answer:"Oak",topic:"Nature"},
+  {question:"What is the fastest bird in the world?",options:["Golden Eagle","Frigate Bird","Peregrine Falcon","Swift"],answer:"Peregrine Falcon",topic:"Nature"},
+  {question:"How many legs does a spider have?",options:["6","8","10","12"],answer:"8",topic:"Nature"},
+  {question:"What is the largest land animal on Earth?",options:["Hippopotamus","White Rhinoceros","Giraffe","African Elephant"],answer:"African Elephant",topic:"Nature"},
+  {question:"Which gas do plants absorb from the atmosphere?",options:["Oxygen","Nitrogen","Carbon Dioxide","Hydrogen"],answer:"Carbon Dioxide",topic:"Nature"},
+  // TECHNOLOGY - Extra
+  {question:"What does 'Wi-Fi' stand for?",options:["Wireless Fidelity","Wide Frequency","Wireless Frequency","Wire-Free Internet"],answer:"Wireless Fidelity",topic:"Technology"},
+  {question:"Who founded Microsoft?",options:["Steve Jobs","Larry Page","Bill Gates","Mark Zuckerberg"],answer:"Bill Gates",topic:"Technology"},
+  {question:"What does 'URL' stand for?",options:["Universal Resource Link","Uniform Resource Locator","Universal Reference Location","Unique Resource Link"],answer:"Uniform Resource Locator",topic:"Technology"},
+  {question:"Which company makes the iPhone?",options:["Samsung","Google","Sony","Apple"],answer:"Apple",topic:"Technology"},
+  {question:"What year was Facebook founded?",options:["2002","2003","2004","2005"],answer:"2004",topic:"Technology"},
+  {question:"What does 'RAM' stand for in computing?",options:["Read Access Memory","Random Access Memory","Rapid Access Module","Read All Memory"],answer:"Random Access Memory",topic:"Technology"},
+  {question:"Which programming language is known for its use in statistical computing?",options:["Python","Java","R","Swift"],answer:"R",topic:"Technology"},
+  {question:"What is the name of the world's most widely used operating system?",options:["macOS","Linux","Windows","Android"],answer:"Windows",topic:"Technology"},
+  {question:"What does 'GPS' stand for?",options:["General Positioning System","Global Positioning System","Geographic Position Satellite","Global Path System"],answer:"Global Positioning System",topic:"Technology"},
+  {question:"Which company created the Java programming language?",options:["Microsoft","Apple","Sun Microsystems","IBM"],answer:"Sun Microsystems",topic:"Technology"},
 ];
 
 async function fetchBatch() {
@@ -954,7 +1083,7 @@ async function startGame() {
     // Race: fetch batch vs 10s timeout fallback
     await Promise.race([
       fetchBatch(),
-      new Promise(resolve => setTimeout(() => { fetchFromLocalBank(); resolve(); }, 3000))
+      new Promise(resolve => setTimeout(() => { fetchFromLocalBank(); resolve(); }, 15000))
     ]);
     if (!queue.length) fetchFromLocalBank();
     showPage("pg-question");
@@ -1546,12 +1675,48 @@ function showUsernamePrompt(onComplete) {
   $('btn-username').onclick = () => {
     const name = input.value.trim();
     if (!name) { input.focus(); return; }
+
+    // Length check
+    if (name.length < 2) {
+      showUsernameError('Name must be at least 2 characters.'); return;
+    }
+
+    // Basic character filter — letters, numbers, spaces, hyphens only
+    if (!/^[a-zA-Z0-9 _\-\.]+$/.test(name)) {
+      showUsernameError('Only letters, numbers, spaces, and . - _ allowed.'); return;
+    }
+
+    // Profanity filter — basic blocked words
+    const blocked = ['fuck','shit','ass','bitch','cunt','dick','cock','pussy',
+      'nigger','nigga','faggot','fag','retard','whore','slut','bastard','damn',
+      'hell','crap','piss','twat','wank','bollocks','arse'];
+    const lower = name.toLowerCase().replace(/[^a-z]/g,'');
+    if (blocked.some(w => lower.includes(w))) {
+      showUsernameError('Please choose a different name.'); return;
+    }
+
     saveUsername(name);
     onComplete();
+  };
+  input.oninput = () => {
+    const errEl = $('username-err');
+    if (errEl) errEl.style.display = 'none';
   };
   input.onkeydown = (e) => {
     if (e.key === 'Enter') $('btn-username').click();
   };
+}
+
+function showUsernameError(msg) {
+  let errEl = $('username-err');
+  if (!errEl) {
+    errEl = document.createElement('div');
+    errEl.id = 'username-err';
+    errEl.style.cssText = 'font-family:IBM Plex Mono,monospace;font-size:10px;color:#9e3020;margin-top:10px;letter-spacing:.05em;';
+    $('btn-username').parentNode.insertBefore(errEl, $('btn-username'));
+  }
+  errEl.textContent = msg;
+  errEl.style.display = 'block';
 }
 
 // ── WEEK SUMMARY on results ──
@@ -1620,11 +1785,16 @@ async function lbFetch(method, body) {
     'X-Master-Key': JSONBIN_API_KEY,
     'X-Access-Key': JSONBIN_API_KEY,
     'X-Bin-Versioning': 'false',
+    'X-Bin-Private': 'false',
   };
-  const opts = { method, headers };
+  const opts = { method, headers, mode: 'cors' };
   if (body) opts.body = JSON.stringify(body);
-  const res = await fetch(`https://api.jsonbin.io/v3/b/${JSONBIN_BIN_ID}`, opts);
-  if (!res.ok) throw new Error('LB error ' + res.status);
+  const url = `https://api.jsonbin.io/v3/b/${JSONBIN_BIN_ID}`;
+  const res = await fetch(url, opts);
+  if (!res.ok) {
+    const txt = await res.text().catch(() => '');
+    throw new Error(`LB ${res.status}: ${txt.substring(0,80)}`);
+  }
   return res.json();
 }
 
@@ -1664,7 +1834,9 @@ async function submitToLeaderboard(weeklyStats) {
   }
 }
 
-async function loadAndShowLeaderboard() {
+let lbReturnPage = 'pg-results';
+async function loadAndShowLeaderboard(returnPage) {
+  lbReturnPage = returnPage || 'pg-results';
   showPage('pg-leaderboard');
   const list = $('lb-list');
   const yourRank = $('lb-your-rank');
@@ -1712,7 +1884,7 @@ async function loadAndShowLeaderboard() {
     }
 
   } catch(e) {
-    list.innerHTML = '<div class="lb-loading">Could not load leaderboard.</div>';
+    list.innerHTML = `<div class="lb-loading">Could not load leaderboard.<br><span style="font-size:8px;opacity:.6;">${e.message}</span></div>`;
   }
 }
 
@@ -1759,7 +1931,7 @@ async function loadAndShowLeaderboard() {
         <div style="font-family:'IBM Plex Mono',monospace;font-size:8.5px;letter-spacing:.32em;color:#a89e8e;text-transform:uppercase;margin-bottom:6px;">This Week</div>
         <div style="font-family:'Playfair Display',Georgia,serif;font-size:28px;font-weight:700;color:#2a2520;">Leaderboard</div>
       </div>
-      <button onclick="showPage('pg-results')" style="background:transparent;border:none;font-family:'IBM Plex Mono',monospace;font-size:9px;letter-spacing:.2em;color:#a89e8e;text-transform:uppercase;cursor:pointer;padding:8px 0;">← Back</button>
+      <button id="lb-back-btn" onclick="showPage(lbReturnPage||'pg-results')" style="background:transparent;border:none;font-family:'IBM Plex Mono',monospace;font-size:9px;letter-spacing:.2em;color:#a89e8e;text-transform:uppercase;cursor:pointer;padding:8px 0;">← Back</button>
     </div>
     <div style="font-family:'IBM Plex Mono',monospace;font-size:8.5px;letter-spacing:.2em;color:#a89e8e;text-transform:uppercase;margin-bottom:14px;">Ranked by weekly correct answers</div>
     <div id="lb-list"><div class="lb-loading">Loading…</div></div>
