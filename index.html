@@ -496,6 +496,279 @@ body{
   padding: 20px 0;
   animation: pulse 1.5s infinite;
 }
+
+/* ── CROSSWORD ── */
+#pg-crossword { overflow-x: hidden; }
+
+.cw-header {
+  padding: 22px 26px 16px;
+  border-bottom: 1px solid #ddd6c8;
+  margin-bottom: 20px;
+}
+.cw-eyebrow {
+  font-family: 'IBM Plex Mono', monospace;
+  font-size: 8.5px;
+  letter-spacing: .32em;
+  color: #9e3020;
+  text-transform: uppercase;
+  margin-bottom: 6px;
+}
+.cw-title {
+  font-family: 'Playfair Display', Georgia, serif;
+  font-size: clamp(28px, 7vw, 40px);
+  font-weight: 700;
+  color: #2a2520;
+  line-height: 1;
+  margin-bottom: 6px;
+}
+.cw-sub {
+  font-family: 'IBM Plex Mono', monospace;
+  font-size: 9px;
+  letter-spacing: .12em;
+  color: #a89e8e;
+}
+
+/* Grid */
+.cw-grid-wrap {
+  overflow-x: auto;
+  padding: 0 26px 20px;
+  -webkit-overflow-scrolling: touch;
+}
+.cw-grid {
+  display: inline-grid;
+  gap: 2px;
+  background: #2a2520;
+  border: 2px solid #2a2520;
+  margin: 0 auto;
+}
+.cw-cell {
+  width: 34px;
+  height: 34px;
+  background: #f7f3ec;
+  position: relative;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+.cw-cell.black {
+  background: #2a2520;
+}
+.cw-cell.active {
+  background: rgba(158,48,32,0.12);
+}
+.cw-cell.word-highlight {
+  background: rgba(232,220,200,0.8);
+}
+.cw-cell.correct-cell {
+  background: rgba(42,96,64,0.15);
+}
+.cw-cell-num {
+  position: absolute;
+  top: 1px;
+  left: 2px;
+  font-family: 'IBM Plex Mono', monospace;
+  font-size: 7px;
+  color: #6b6058;
+  line-height: 1;
+}
+.cw-cell-letter {
+  font-family: 'Playfair Display', Georgia, serif;
+  font-size: 16px;
+  font-weight: 700;
+  color: #2a2520;
+  text-transform: uppercase;
+  user-select: none;
+}
+.cw-cell-letter.revealed {
+  color: #9e3020;
+  font-style: italic;
+}
+
+/* Hidden input to capture keyboard */
+#cw-input {
+  position: absolute;
+  opacity: 0;
+  width: 1px;
+  height: 1px;
+  top: -9999px;
+}
+
+/* Clues */
+.cw-clues {
+  padding: 0 26px;
+  margin-bottom: 24px;
+}
+.cw-clue-section {
+  margin-bottom: 20px;
+}
+.cw-clue-head {
+  font-family: 'IBM Plex Mono', monospace;
+  font-size: 8.5px;
+  letter-spacing: .28em;
+  color: #a89e8e;
+  text-transform: uppercase;
+  margin-bottom: 10px;
+  border-bottom: 1px solid #ddd6c8;
+  padding-bottom: 6px;
+}
+.cw-clue {
+  display: flex;
+  gap: 10px;
+  padding: 8px 0;
+  border-bottom: 1px solid #f0ece3;
+  cursor: pointer;
+  -webkit-tap-highlight-color: transparent;
+}
+.cw-clue.active-clue {
+  background: rgba(158,48,32,0.05);
+  margin: 0 -8px;
+  padding: 8px 8px;
+  border-radius: 2px;
+}
+.cw-clue-num {
+  font-family: 'IBM Plex Mono', monospace;
+  font-size: 10px;
+  color: #a89e8e;
+  flex-shrink: 0;
+  width: 20px;
+  padding-top: 2px;
+}
+.cw-clue-text {
+  font-size: 13px;
+  line-height: 1.5;
+  color: #2a2520;
+}
+.cw-clue.solved-clue .cw-clue-text {
+  color: #a89e8e;
+  text-decoration: line-through;
+}
+
+/* Keyboard */
+.cw-keyboard {
+  position: sticky;
+  bottom: 0;
+  background: #ede9e0;
+  border-top: 1px solid #ddd6c8;
+  padding: 10px 8px 20px;
+  z-index: 10;
+}
+.cw-kb-row {
+  display: flex;
+  justify-content: center;
+  gap: 5px;
+  margin-bottom: 5px;
+}
+.cw-key {
+  background: #f7f3ec;
+  border: 1px solid #c8c0b2;
+  border-radius: 4px;
+  font-family: 'IBM Plex Mono', monospace;
+  font-size: 13px;
+  color: #2a2520;
+  padding: 8px 0;
+  min-width: 30px;
+  text-align: center;
+  cursor: pointer;
+  -webkit-tap-highlight-color: transparent;
+  user-select: none;
+  transition: background 0.1s;
+  flex: 1;
+  max-width: 36px;
+}
+.cw-key:active { background: #ddd6c8; }
+.cw-key.wide { max-width: 52px; font-size: 10px; letter-spacing: .05em; }
+
+/* Loading / Complete states */
+.cw-loading {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  min-height: 50vh;
+  gap: 18px;
+  padding: 40px 26px;
+  text-align: center;
+}
+.cw-complete {
+  padding: 40px 26px;
+  text-align: center;
+}
+.cw-complete-head {
+  font-family: 'Playfair Display', Georgia, serif;
+  font-size: clamp(32px, 8vw, 52px);
+  font-weight: 700;
+  color: #2a2520;
+  margin-bottom: 10px;
+}
+.cw-complete-sub {
+  font-size: 15px;
+  font-style: italic;
+  color: #6b6058;
+  margin-bottom: 32px;
+}
+
+/* ── DEBUG PANEL ── */
+#debug-panel {
+  position: fixed;
+  bottom: 20px;
+  right: 20px;
+  z-index: 9999;
+  display: none;
+}
+#debug-toggle {
+  width: 44px;
+  height: 44px;
+  border-radius: 50%;
+  background: #2a2520;
+  color: #f7f3ec;
+  border: none;
+  font-size: 18px;
+  cursor: pointer;
+  box-shadow: 0 2px 12px rgba(0,0,0,0.3);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+#debug-menu {
+  position: absolute;
+  bottom: 52px;
+  right: 0;
+  background: #2a2520;
+  border-radius: 8px;
+  padding: 12px;
+  min-width: 220px;
+  box-shadow: 0 4px 20px rgba(0,0,0,0.4);
+  display: none;
+}
+#debug-menu.open { display: block; }
+.debug-title {
+  font-family: 'IBM Plex Mono', monospace;
+  font-size: 9px;
+  letter-spacing: .25em;
+  color: #a89e8e;
+  text-transform: uppercase;
+  margin-bottom: 10px;
+  padding-bottom: 8px;
+  border-bottom: 1px solid rgba(255,255,255,.1);
+}
+.debug-btn {
+  display: block;
+  width: 100%;
+  background: transparent;
+  border: 1px solid rgba(255,255,255,.15);
+  color: #f7f3ec;
+  font-family: 'IBM Plex Mono', monospace;
+  font-size: 10px;
+  letter-spacing: .08em;
+  padding: 8px 10px;
+  margin-bottom: 6px;
+  cursor: pointer;
+  text-align: left;
+  border-radius: 4px;
+  transition: background .15s;
+}
+.debug-btn:hover { background: rgba(255,255,255,.1); }
+.debug-btn.danger { border-color: rgba(158,48,32,.5); color: #e87060; }
 </style>
 </head>
 <body>
@@ -1463,6 +1736,11 @@ $("btn-start").onclick = () => {
 };
 
 function checkDailyAndStart() {
+  // Sunday: show crossword instead of trivia
+  if (isSunday()) {
+    showSundayCrossword();
+    return;
+  }
   if (hasPlayedToday()) {
     showDailyLock();
     return;
@@ -1645,7 +1923,20 @@ function showDailyLock() {
   const today = getToday();
   const entry = weekData ? getTodayEntry(weekData) : null;
 
-  if (entry) {
+  if (isSunday()) {
+    $('daily-head').textContent = 'It\'s Sunday.';
+    const hasCW = hasSundayCrossword();
+    $('daily-sub').textContent = hasCW
+      ? 'Your weekly crossword is ready. Tap below to play.'
+      : 'Play Monday through Saturday to unlock your Sunday crossword.';
+    $('daily-countdown').textContent = '';
+    // Replace leaderboard button with crossword button if Sunday
+    const btn = document.querySelector('#pg-daily button');
+    if (btn && hasCW) {
+      btn.textContent = 'Open Sunday Crossword →';
+      btn.onclick = () => showSundayCrossword();
+    }
+  } else if (entry) {
     $('daily-head').textContent = `Today's session is complete.`;
     $('daily-sub').textContent = `You got ${entry.correct} correct. Come back tomorrow for a fresh edition.`;
   }
@@ -1888,6 +2179,751 @@ async function loadAndShowLeaderboard(returnPage) {
   }
 }
 
+
+// ══════════════════════════════════════════════════
+// CROSSWORD ENGINE
+// ══════════════════════════════════════════════════
+
+let CW = {
+  words: [],        // [{answer, clue, direction, row, col, number}]
+  grid: [],         // 2D array of cells
+  userGrid: [],     // 2D array of user letters
+  size: 0,
+  activeCell: null, // {row, col}
+  activeDir: 'across',
+  activeWord: null,
+  generated: false,
+};
+
+// ── STEP 1: Generate crossword data via Claude ──
+async function generateCrossword() {
+  const weekData = loadWeekData();
+  if (!weekData) return null;
+
+  // Collect all misses from the week
+  const allMisses = weekData.days.flatMap(d => d.missed || []);
+  if (allMisses.length < 3) return null;
+
+  // Deduplicate and take up to 10
+  const unique = [];
+  const seen = new Set();
+  for (const m of allMisses) {
+    const key = m.correctAnswer.toUpperCase().replace(/[^A-Z]/g,'');
+    if (key.length >= 3 && key.length <= 12 && !seen.has(key)) {
+      seen.add(key);
+      unique.push({ answer: key, clue: m.question, topic: m.topic });
+    }
+  }
+  const words = unique.slice(0, 10);
+
+  const wordList = words.map((w,i) => `${i+1}. Answer: "${w.answer}" | Original question: "${w.clue}"`).join('\n');
+
+  const prompt = `You are building a crossword puzzle. Given these answers and their original trivia questions, write a SHORT crossword-style clue for each answer. The clue should hint at the answer without giving it away directly — like a real crossword clue, not just the original question.
+
+${wordList}
+
+Return ONLY a valid JSON array, no markdown:
+[{"answer":"WORD","clue":"Crossword-style clue here"},...]
+
+Keep clues under 12 words. Be clever but fair.`;
+
+  try {
+    const raw = await callClaude(prompt, 800);
+    const clean = raw.replace(/\`\`\`json|\`\`\`/g,'').trim();
+    const clued = JSON.parse(clean);
+    // Merge clues back
+    return clued.map(item => ({
+      answer: item.answer.toUpperCase().replace(/[^A-Z]/g,''),
+      clue: item.clue,
+    })).filter(w => w.answer.length >= 3);
+  } catch(e) {
+    // Fallback: use original questions as clues
+    return words.map(w => ({ answer: w.answer, clue: w.clue }));
+  }
+}
+
+// ── STEP 2: Place words into a grid ──
+function buildCrosswordGrid(words) {
+  // Sort by length desc — try to place longer words first
+  const sorted = [...words].sort((a,b) => b.answer.length - a.answer.length);
+
+  // Start with a large empty grid
+  const SIZE = 15;
+  const placed = [];
+
+  function emptyGrid() {
+    return Array.from({length: SIZE}, () => Array(SIZE).fill(null));
+  }
+
+  let grid = emptyGrid();
+
+  function canPlace(word, row, col, dir) {
+    const len = word.length;
+    // Boundary check
+    if (dir === 'across') { if (col + len > SIZE) return false; }
+    else                  { if (row + len > SIZE) return false; }
+
+    let hasIntersection = placed.length === 0; // first word always ok
+
+    for (let i = 0; i < len; i++) {
+      const r = dir === 'across' ? row : row + i;
+      const c = dir === 'across' ? col + i : col;
+      const cell = grid[r][c];
+
+      if (cell === null) {
+        // Check adjacent cells don't create unwanted words
+        if (dir === 'across') {
+          if (r > 0 && grid[r-1][c] !== null) return false;
+          if (r < SIZE-1 && grid[r+1][c] !== null) return false;
+        } else {
+          if (c > 0 && grid[r][c-1] !== null) return false;
+          if (c < SIZE-1 && grid[r][c+1] !== null) return false;
+        }
+      } else if (cell === word[i]) {
+        hasIntersection = true;
+      } else {
+        return false; // conflict
+      }
+    }
+
+    // Check before/after
+    if (dir === 'across') {
+      if (col > 0 && grid[row][col-1] !== null) return false;
+      if (col + len < SIZE && grid[row][col+len] !== null) return false;
+    } else {
+      if (row > 0 && grid[row-1][col] !== null) return false;
+      if (row + len < SIZE && grid[row+len][col] !== null) return false;
+    }
+
+    return hasIntersection;
+  }
+
+  function placeWord(word, row, col, dir) {
+    for (let i = 0; i < word.length; i++) {
+      const r = dir === 'across' ? row : row + i;
+      const c = dir === 'across' ? col + i : col;
+      grid[r][c] = word[i];
+    }
+    placed.push({ answer: word, row, col, dir });
+  }
+
+  // Place first word in center, across
+  const first = sorted[0];
+  const startCol = Math.floor((SIZE - first.answer.length) / 2);
+  const startRow = Math.floor(SIZE / 2);
+  placeWord(first.answer, startRow, startCol, 'across');
+
+  // Try to place remaining words
+  for (let wi = 1; wi < sorted.length; wi++) {
+    const word = sorted[wi].answer;
+    let bestScore = -1, bestR, bestC, bestDir;
+
+    // Try intersecting with already-placed words
+    for (const p of placed) {
+      for (let pi = 0; pi < p.answer.length; pi++) {
+        for (let wi2 = 0; wi2 < word.length; wi2++) {
+          if (p.answer[pi] !== word[wi2]) continue;
+
+          // Try across (intersect at pi in placed, wi2 in word)
+          if (p.dir === 'down') {
+            const r = p.row + pi;
+            const c = p.col - wi2;
+            if (c >= 0 && canPlace(word, r, c, 'across')) {
+              const score = wi2 + (word.length - wi2); // prefer middle intersections
+              if (score > bestScore) { bestScore = score; bestR = r; bestC = c; bestDir = 'across'; }
+            }
+          }
+
+          // Try down
+          if (p.dir === 'across') {
+            const r = p.row - wi2;
+            const c = p.col + pi;
+            if (r >= 0 && canPlace(word, r, c, 'down')) {
+              const score = wi2 + (word.length - wi2);
+              if (score > bestScore) { bestScore = score; bestR = r; bestC = c; bestDir = 'down'; }
+            }
+          }
+        }
+      }
+    }
+
+    if (bestScore >= 0) placeWord(word, bestR, bestC, bestDir);
+  }
+
+  // Crop grid to used area
+  let minR = SIZE, maxR = 0, minC = SIZE, maxC = 0;
+  for (let r = 0; r < SIZE; r++) for (let c = 0; c < SIZE; c++) {
+    if (grid[r][c] !== null) {
+      minR = Math.min(minR, r); maxR = Math.max(maxR, r);
+      minC = Math.min(minC, c); maxC = Math.max(maxC, c);
+    }
+  }
+  // Add 1-cell padding
+  minR = Math.max(0, minR-1); minC = Math.max(0, minC-1);
+  maxR = Math.min(SIZE-1, maxR+1); maxC = Math.min(SIZE-1, maxC+1);
+
+  const rows = maxR - minR + 1;
+  const cols = maxC - minC + 1;
+  const cropped = Array.from({length: rows}, (_,r) =>
+    Array.from({length: cols}, (_,c) => grid[r+minR][c+minC])
+  );
+
+  // Adjust placed word positions
+  const adjustedPlaced = placed.map(p => ({
+    ...p, row: p.row - minR, col: p.col - minC
+  }));
+
+  return { grid: cropped, placed: adjustedPlaced, rows, cols };
+}
+
+// ── STEP 3: Number the words and build clue lists ──
+function numberWords(gridData, wordObjects) {
+  const { grid, placed, rows, cols } = gridData;
+  let number = 1;
+  const numbered = [];
+
+  // For each cell, check if it starts an across or down word
+  const acrossStarts = new Map();
+  const downStarts = new Map();
+
+  for (const p of placed) {
+    const key = `${p.row},${p.col}`;
+    if (p.dir === 'across') acrossStarts.set(key, p);
+    else downStarts.set(key, p);
+  }
+
+  const cellNumbers = {};
+  for (let r = 0; r < rows; r++) {
+    for (let c = 0; c < cols; c++) {
+      if (grid[r][c] === null) continue;
+      const key = `${r},${c}`;
+      if (acrossStarts.has(key) || downStarts.has(key)) {
+        cellNumbers[key] = number;
+
+        if (acrossStarts.has(key)) {
+          const p = acrossStarts.get(key);
+          // Find matching word object
+          const wo = wordObjects.find(w => w.answer === p.answer);
+          numbered.push({ ...p, number, clue: wo ? wo.clue : p.answer });
+        }
+        if (downStarts.has(key)) {
+          const p = downStarts.get(key);
+          const wo = wordObjects.find(w => w.answer === p.answer);
+          numbered.push({ ...p, number, clue: wo ? wo.clue : p.answer });
+        }
+        number++;
+      }
+    }
+  }
+
+  return { numbered, cellNumbers };
+}
+
+// ── STEP 4: Render the crossword ──
+function renderCrossword(words, gridData, numbered, cellNumbers) {
+  const { grid, rows, cols } = gridData;
+
+  CW.words = numbered;
+  CW.grid = grid;
+  CW.userGrid = Array.from({length: rows}, () => Array(cols).fill(''));
+  CW.size = { rows, cols };
+  CW.cellNumbers = cellNumbers;
+
+  const content = $('cw-content');
+  content.innerHTML = `
+    <div class="cw-header">
+      <div class="cw-eyebrow">Sunday Edition</div>
+      <div class="cw-title">Your Weekly Crossword</div>
+      <div class="cw-sub">${numbered.length} clues from this week's misses</div>
+    </div>
+    <div class="cw-grid-wrap">
+      <div class="cw-grid" id="cw-grid" style="grid-template-columns: repeat(${cols}, 34px); grid-template-rows: repeat(${rows}, 34px);"></div>
+    </div>
+    <div class="cw-clues">
+      <div class="cw-clue-section">
+        <div class="cw-clue-head">Across</div>
+        <div id="cw-clues-across"></div>
+      </div>
+      <div class="cw-clue-section">
+        <div class="cw-clue-head">Down</div>
+        <div id="cw-clues-down"></div>
+      </div>
+    </div>
+    <div style="height:160px;"></div>
+  `;
+
+  // Build grid cells
+  const gridEl = $('cw-grid');
+  for (let r = 0; r < rows; r++) {
+    for (let c = 0; c < cols; c++) {
+      const cell = document.createElement('div');
+      cell.className = 'cw-cell' + (grid[r][c] === null ? ' black' : '');
+      cell.id = `cw-${r}-${c}`;
+
+      if (grid[r][c] !== null) {
+        const numKey = `${r},${c}`;
+        if (cellNumbers[numKey]) {
+          const num = document.createElement('div');
+          num.className = 'cw-cell-num';
+          num.textContent = cellNumbers[numKey];
+          cell.appendChild(num);
+        }
+        const letter = document.createElement('div');
+        letter.className = 'cw-cell-letter';
+        cell.appendChild(letter);
+        cell.addEventListener('click', () => cwCellClick(r, c));
+      }
+      gridEl.appendChild(cell);
+    }
+  }
+
+  // Build clue lists
+  const across = numbered.filter(w => w.dir === 'across').sort((a,b) => a.number - b.number);
+  const down = numbered.filter(w => w.dir === 'down').sort((a,b) => a.number - b.number);
+
+  across.forEach(w => {
+    const div = document.createElement('div');
+    div.className = 'cw-clue';
+    div.id = `clue-across-${w.number}`;
+    div.innerHTML = `<span class="cw-clue-num">${w.number}</span><span class="cw-clue-text">${w.clue}</span>`;
+    div.addEventListener('click', () => cwSelectWord(w));
+    $('cw-clues-across').appendChild(div);
+  });
+
+  down.forEach(w => {
+    const div = document.createElement('div');
+    div.className = 'cw-clue';
+    div.id = `clue-down-${w.number}`;
+    div.innerHTML = `<span class="cw-clue-num">${w.number}</span><span class="cw-clue-text">${w.clue}</span>`;
+    div.addEventListener('click', () => cwSelectWord(w));
+    $('cw-clues-down').appendChild(div);
+  });
+
+  // Render keyboard
+  renderKeyboard();
+
+  // Select first word
+  if (numbered.length > 0) cwSelectWord(numbered[0]);
+}
+
+function renderKeyboard() {
+  const rows = [
+    ['Q','W','E','R','T','Y','U','I','O','P'],
+    ['A','S','D','F','G','H','J','K','L'],
+    ['DEL','Z','X','C','V','B','N','M','→'],
+  ];
+
+  // Remove old keyboard if exists
+  const old = document.querySelector('.cw-keyboard');
+  if (old) old.remove();
+
+  const kb = document.createElement('div');
+  kb.className = 'cw-keyboard';
+
+  rows.forEach(row => {
+    const rowEl = document.createElement('div');
+    rowEl.className = 'cw-kb-row';
+    row.forEach(k => {
+      const key = document.createElement('div');
+      key.className = 'cw-key' + (k === 'DEL' || k === '→' ? ' wide' : '');
+      key.textContent = k;
+      key.addEventListener('click', () => cwKeyPress(k));
+      rowEl.appendChild(key);
+    });
+    kb.appendChild(rowEl);
+  });
+
+  $('pg-crossword').appendChild(kb);
+}
+
+// ── INTERACTION ──
+function cwCellClick(r, c) {
+  if (CW.grid[r][c] === null) return;
+
+  // If clicking same cell, toggle direction
+  if (CW.activeCell && CW.activeCell.row === r && CW.activeCell.col === c) {
+    CW.activeDir = CW.activeDir === 'across' ? 'down' : 'across';
+  }
+
+  CW.activeCell = { row: r, col: c };
+
+  // Find a word that covers this cell in active direction
+  let word = CW.words.find(w => w.dir === CW.activeDir && cwWordCoversCell(w, r, c));
+  if (!word) {
+    // Try other direction
+    CW.activeDir = CW.activeDir === 'across' ? 'down' : 'across';
+    word = CW.words.find(w => w.dir === CW.activeDir && cwWordCoversCell(w, r, c));
+  }
+  if (word) cwSelectWord(word, { row: r, col: c });
+}
+
+function cwWordCoversCell(word, r, c) {
+  if (word.dir === 'across') {
+    return word.row === r && c >= word.col && c < word.col + word.answer.length;
+  } else {
+    return word.col === c && r >= word.row && r < word.row + word.answer.length;
+  }
+}
+
+function cwSelectWord(word, cell) {
+  CW.activeWord = word;
+  CW.activeDir = word.dir;
+  CW.activeCell = cell || { row: word.row, col: word.col };
+
+  // Find first empty cell in this word
+  if (!cell) {
+    for (let i = 0; i < word.answer.length; i++) {
+      const r = word.dir === 'across' ? word.row : word.row + i;
+      const c = word.dir === 'across' ? word.col + i : word.col;
+      if (!CW.userGrid[r][c]) {
+        CW.activeCell = { row: r, col: c };
+        break;
+      }
+    }
+  }
+
+  cwUpdateHighlights();
+
+  // Scroll clue into view
+  const clueEl = $(`clue-${word.dir}-${word.number}`);
+  if (clueEl) clueEl.scrollIntoView({ block: 'nearest', behavior: 'smooth' });
+
+  // Focus hidden input for hardware keyboard support
+  const inp = $('cw-input');
+  if (inp) { inp.value = ''; inp.focus(); }
+}
+
+function cwUpdateHighlights() {
+  // Clear all highlights
+  document.querySelectorAll('.cw-cell').forEach(el => {
+    el.classList.remove('active','word-highlight');
+  });
+  document.querySelectorAll('.cw-clue').forEach(el => {
+    el.classList.remove('active-clue');
+  });
+
+  if (!CW.activeWord) return;
+
+  // Highlight word
+  const w = CW.activeWord;
+  for (let i = 0; i < w.answer.length; i++) {
+    const r = w.dir === 'across' ? w.row : w.row + i;
+    const cc = w.dir === 'across' ? w.col + i : w.col;
+    const el = $(`cw-${r}-${cc}`);
+    if (el) el.classList.add('word-highlight');
+  }
+
+  // Highlight active cell
+  const activeEl = $(`cw-${CW.activeCell.row}-${CW.activeCell.col}`);
+  if (activeEl) activeEl.classList.add('active');
+
+  // Highlight clue
+  const clueEl = $(`clue-${w.dir}-${w.number}`);
+  if (clueEl) clueEl.classList.add('active-clue');
+}
+
+function cwKeyPress(key) {
+  if (!CW.activeCell || !CW.activeWord) return;
+  const { row, col } = CW.activeCell;
+
+  if (key === 'DEL') {
+    if (CW.userGrid[row][col]) {
+      CW.userGrid[row][col] = '';
+      cwUpdateCell(row, col);
+    } else {
+      cwMoveCursor(-1);
+    }
+  } else if (key === '→') {
+    cwMoveCursor(1);
+  } else if (/^[A-Z]$/.test(key)) {
+    CW.userGrid[row][col] = key;
+    cwUpdateCell(row, col);
+    cwMoveCursor(1);
+    cwCheckComplete();
+  }
+}
+
+function cwMoveCursor(delta) {
+  const w = CW.activeWord;
+  if (!w) return;
+
+  let idx = w.dir === 'across'
+    ? CW.activeCell.col - w.col
+    : CW.activeCell.row - w.row;
+
+  idx += delta;
+  idx = Math.max(0, Math.min(w.answer.length - 1, idx));
+
+  CW.activeCell = {
+    row: w.dir === 'across' ? w.row : w.row + idx,
+    col: w.dir === 'across' ? w.col + idx : w.col,
+  };
+  cwUpdateHighlights();
+}
+
+function cwUpdateCell(r, c) {
+  const cell = $(`cw-${r}-${c}`);
+  if (!cell) return;
+  const letter = cell.querySelector('.cw-cell-letter');
+  if (letter) {
+    letter.textContent = CW.userGrid[r][c];
+    letter.classList.remove('revealed');
+  }
+}
+
+function cwCheckComplete() {
+  const { rows, cols } = CW.size;
+  let complete = true;
+  for (let r = 0; r < rows; r++) {
+    for (let c = 0; c < cols; c++) {
+      if (CW.grid[r][c] !== null && CW.userGrid[r][c] !== CW.grid[r][c]) {
+        complete = false;
+        break;
+      }
+    }
+    if (!complete) break;
+  }
+
+  if (complete) {
+    setTimeout(showCrosswordComplete, 400);
+  }
+
+  // Mark solved clues
+  CW.words.forEach(w => {
+    let solved = true;
+    for (let i = 0; i < w.answer.length; i++) {
+      const r = w.dir === 'across' ? w.row : w.row + i;
+      const c = w.dir === 'across' ? w.col + i : w.col;
+      if (CW.userGrid[r][c] !== w.answer[i]) { solved = false; break; }
+    }
+    const clueEl = $(`clue-${w.dir}-${w.number}`);
+    if (clueEl) clueEl.classList.toggle('solved-clue', solved);
+    // Color correct cells
+    if (solved) {
+      for (let i = 0; i < w.answer.length; i++) {
+        const r = w.dir === 'across' ? w.row : w.row + i;
+        const cc = w.dir === 'across' ? w.col + i : w.col;
+        const cell = $(`cw-${r}-${cc}`);
+        if (cell) cell.classList.add('correct-cell');
+      }
+    }
+  });
+}
+
+function showCrosswordComplete() {
+  const content = $('cw-content');
+  content.innerHTML = `
+    <div class="cw-complete" style="padding:60px 26px;">
+      <div style="font-size:48px;margin-bottom:20px;">✦</div>
+      <div class="cw-complete-head">Puzzle Complete</div>
+      <div class="cw-complete-sub">You filled in every answer from this week's misses. Come back Monday for a fresh edition.</div>
+      <div style="margin:32px 0;padding:20px 0;border-top:1px solid #ddd6c8;border-bottom:1px solid #ddd6c8;">
+        <div style="font-family:'IBM Plex Mono',monospace;font-size:8.5px;letter-spacing:.28em;color:#a89e8e;text-transform:uppercase;margin-bottom:12px;">Next Week Starts</div>
+        <div style="font-family:'Playfair Display',Georgia,serif;font-size:22px;font-weight:700;color:#2a2520;">Monday</div>
+      </div>
+    </div>
+  `;
+  // Remove keyboard
+  const kb = document.querySelector('.cw-keyboard');
+  if (kb) kb.remove();
+}
+
+// Hardware keyboard support
+document.addEventListener('keydown', (e) => {
+  if ($('pg-crossword').classList.contains('active')) {
+    if (e.key === 'Backspace') { cwKeyPress('DEL'); e.preventDefault(); }
+    else if (e.key === 'ArrowRight' || e.key === 'ArrowDown' || e.key === 'Tab') { cwKeyPress('→'); e.preventDefault(); }
+    else if (/^[a-zA-Z]$/.test(e.key)) { cwKeyPress(e.key.toUpperCase()); e.preventDefault(); }
+  }
+});
+
+// ── ENTRY POINT ──
+async function showSundayCrossword() {
+  showPage('pg-crossword');
+  const content = $('cw-content');
+
+  // Check if already generated this week
+  const savedCW = (() => { try { const s = localStorage.getItem('tnt_crossword'); if (!s) return null; const d = JSON.parse(s); return d.weekStart === getWeekStart() ? d : null; } catch(e) { return null; } })();
+
+  if (savedCW) {
+    // Restore saved crossword
+    const gridData = { grid: savedCW.grid, placed: savedCW.placed, rows: savedCW.grid.length, cols: savedCW.grid[0].length };
+    const { numbered, cellNumbers } = numberWords(gridData, savedCW.words);
+    CW.userGrid = savedCW.userGrid || Array.from({length: savedCW.grid.length}, () => Array(savedCW.grid[0].length).fill(''));
+    renderCrossword(savedCW.words, gridData, numbered, cellNumbers);
+    // Restore user input
+    if (savedCW.userGrid) {
+      const { rows, cols } = CW.size;
+      for (let r = 0; r < rows; r++) for (let c = 0; c < cols; c++) {
+        CW.userGrid[r][c] = savedCW.userGrid[r][c] || '';
+        cwUpdateCell(r, c);
+      }
+    }
+    return;
+  }
+
+  // Show loading
+  content.innerHTML = `
+    <div class="cw-loading">
+      <div class="cw-eyebrow" style="font-family:'IBM Plex Mono',monospace;font-size:8.5px;letter-spacing:.32em;color:#9e3020;text-transform:uppercase;">Sunday Edition</div>
+      <div style="font-family:'Playfair Display',Georgia,serif;font-size:26px;font-weight:700;color:#2a2520;line-height:1.2;">Building your<br>weekly crossword…</div>
+      <div class="dots-wrap"><div class="ldot" style="animation-delay:0s"></div><div class="ldot" style="animation-delay:.2s"></div><div class="ldot" style="animation-delay:.4s"></div></div>
+      <div style="font-family:'IBM Plex Mono',monospace;font-size:9px;letter-spacing:.2em;color:#a89e8e;text-transform:uppercase;">Using your week's misses</div>
+    </div>
+  `;
+
+  try {
+    const words = await generateCrossword();
+    if (!words || words.length < 3) {
+      content.innerHTML = `<div class="cw-loading"><div style="font-family:'Playfair Display',Georgia,serif;font-size:22px;color:#2a2520;">Not enough misses yet.</div><div style="font-size:14px;font-style:italic;color:#6b6058;margin-top:12px;">Play Mon–Sat and miss a few to unlock your Sunday crossword.</div></div>`;
+      return;
+    }
+
+    const gridData = buildCrosswordGrid(words);
+    const { numbered, cellNumbers } = numberWords(gridData, words);
+
+    // Save crossword state
+    try {
+      localStorage.setItem('tnt_crossword', JSON.stringify({
+        weekStart: getWeekStart(),
+        words,
+        grid: gridData.grid,
+        placed: gridData.placed,
+        userGrid: Array.from({length: gridData.rows}, () => Array(gridData.cols).fill('')),
+      }));
+    } catch(e) {}
+
+    renderCrossword(words, gridData, numbered, cellNumbers);
+
+  } catch(e) {
+    content.innerHTML = `<div class="cw-loading"><div style="font-size:14px;color:#9e3020;font-family:'IBM Plex Mono',monospace;">Could not generate crossword: ${e.message}</div></div>`;
+  }
+}
+
+// Save user progress periodically
+setInterval(() => {
+  if (!$('pg-crossword').classList.contains('active')) return;
+  try {
+    const saved = JSON.parse(localStorage.getItem('tnt_crossword') || '{}');
+    saved.userGrid = CW.userGrid;
+    localStorage.setItem('tnt_crossword', JSON.stringify(saved));
+  } catch(e) {}
+}, 5000);
+
+
+// ══════════════════════════════════════════════════
+// DEBUG / DEMO TOOLS
+// ══════════════════════════════════════════════════
+
+// Show debug panel with secret tap (tap masthead title 5 times)
+(function() {
+  let tapCount = 0, tapTimer;
+  document.addEventListener('DOMContentLoaded', () => {
+    const logo = document.querySelector('.logo');
+    if (!logo) return;
+    logo.addEventListener('click', () => {
+      tapCount++;
+      clearTimeout(tapTimer);
+      tapTimer = setTimeout(() => { tapCount = 0; }, 2000);
+      if (tapCount >= 5) {
+        tapCount = 0;
+        const panel = document.getElementById('debug-panel');
+        panel.style.display = panel.style.display === 'none' ? 'block' : 'none';
+      }
+    });
+  });
+})();
+
+// Sample missed questions for simulation
+const SAMPLE_MISSES = [
+  { question: "What is the capital of Australia?", correctAnswer: "CANBERRA", topic: "Geography" },
+  { question: "Which element has the chemical symbol Au?", correctAnswer: "GOLD", topic: "Science" },
+  { question: "Who wrote Pride and Prejudice?", correctAnswer: "AUSTEN", topic: "Literature" },
+  { question: "In which year did the Berlin Wall fall?", correctAnswer: "NINETEENEIGHTYNINE", topic: "History" },
+  { question: "Which planet is known as the Red Planet?", correctAnswer: "MARS", topic: "Science" },
+  { question: "Who painted the Sistine Chapel ceiling?", correctAnswer: "MICHELANGELO", topic: "Art" },
+  { question: "What is the largest ocean on Earth?", correctAnswer: "PACIFIC", topic: "Geography" },
+  { question: "Which band released Dark Side of the Moon?", correctAnswer: "PINKFLOYD", topic: "Music" },
+  { question: "What is the hardest natural substance?", correctAnswer: "DIAMOND", topic: "Science" },
+  { question: "Who directed Schindlers List?", correctAnswer: "SPIELBERG", topic: "Film" },
+];
+
+function debugSimulateDay(dayOfWeek) {
+  // dayOfWeek: 1=Mon, 2=Tue ... 6=Sat
+  const dayNames = ['','Monday','Tuesday','Wednesday','Thursday','Friday','Saturday'];
+
+  let weekData = loadWeekData() || initWeekData();
+
+  // Create a fake date for that day this week
+  const today = new Date();
+  const currentDay = today.getDay() || 7; // make Sunday = 7
+  const diff = dayOfWeek - (currentDay === 0 ? 7 : currentDay);
+  const fakeDate = new Date(today);
+  fakeDate.setDate(today.getDate() + diff);
+  const fakeDateStr = fakeDate.getFullYear() + '-' +
+    String(fakeDate.getMonth()+1).padStart(2,'0') + '-' +
+    String(fakeDate.getDate()).padStart(2,'0');
+
+  // Remove existing entry for this day
+  weekData.days = weekData.days.filter(d => d.dayOfWeek !== dayOfWeek);
+
+  // Pick 2-3 sample misses for this day
+  const startIdx = (dayOfWeek - 1) * 2;
+  const misses = SAMPLE_MISSES.slice(startIdx, startIdx + 2).map(m => ({
+    question: m.question,
+    correctAnswer: m.correctAnswer,
+    topic: m.topic
+  }));
+
+  weekData.days.push({
+    date: fakeDateStr,
+    dayOfWeek,
+    correct: Math.floor(Math.random() * 15) + 5,
+    streak: Math.floor(Math.random() * 8) + 1,
+    missed: misses,
+    played: true,
+  });
+
+  saveWeekData(weekData);
+
+  // Close menu and refresh current page
+  document.getElementById('debug-menu').classList.remove('open');
+  alert(dayNames[dayOfWeek] + ' simulated! ' + misses.length + ' misses saved.');
+
+  // If on daily lock, refresh it
+  if (document.getElementById('pg-daily').classList.contains('active')) {
+    showDailyLock();
+  }
+}
+
+function debugTriggerSunday() {
+  document.getElementById('debug-menu').classList.remove('open');
+  // Make sure we have enough misses
+  const stats = getWeeklyStats();
+  if (!stats || stats.allMisses.length < 3) {
+    alert('Simulate at least 2 days first to get enough misses for the crossword.');
+    return;
+  }
+  // Temporarily override isSunday to return true
+  showSundayCrossword();
+}
+
+function debugShowLeaderboard() {
+  document.getElementById('debug-menu').classList.remove('open');
+  loadAndShowLeaderboard();
+}
+
+function debugClearAll() {
+  if (!confirm('Clear all game data? This resets your week, username, and crossword.')) return;
+  try {
+    Object.values(STORAGE_KEYS).forEach(k => localStorage.removeItem(k));
+    localStorage.removeItem('tnt_crossword');
+    localStorage.removeItem('tnt_tutorial_seen');
+  } catch(e) {}
+  document.getElementById('debug-menu').classList.remove('open');
+  location.reload();
+}
+
 </script>
 
 <!-- TUTORIAL OVERLAY -->
@@ -1939,6 +2975,33 @@ async function loadAndShowLeaderboard(returnPage) {
       <div id="lb-your-rank" style="font-family:'IBM Plex Mono',monospace;font-size:9px;letter-spacing:.15em;color:#a89e8e;text-align:center;"></div>
     </div>
   </div>
+</div>
+
+
+<!-- CROSSWORD PAGE -->
+<div class="page" id="pg-crossword">
+  <div id="cw-content">
+    <!-- Filled dynamically -->
+  </div>
+  <input id="cw-input" type="text" autocomplete="off" autocorrect="off" autocapitalize="characters" spellcheck="false"/>
+</div>
+
+
+<!-- DEBUG PANEL -->
+<div id="debug-panel">
+  <div id="debug-menu">
+    <div class="debug-title">🛠 Dev Tools</div>
+    <button class="debug-btn" onclick="debugSimulateDay(1)">Simulate Monday</button>
+    <button class="debug-btn" onclick="debugSimulateDay(2)">Simulate Tuesday</button>
+    <button class="debug-btn" onclick="debugSimulateDay(3)">Simulate Wednesday</button>
+    <button class="debug-btn" onclick="debugSimulateDay(4)">Simulate Thursday</button>
+    <button class="debug-btn" onclick="debugSimulateDay(5)">Simulate Friday</button>
+    <button class="debug-btn" onclick="debugSimulateDay(6)">Simulate Saturday</button>
+    <button class="debug-btn" onclick="debugTriggerSunday()">→ Trigger Sunday Crossword</button>
+    <button class="debug-btn" onclick="debugShowLeaderboard()">View Leaderboard</button>
+    <button class="debug-btn danger" onclick="debugClearAll()">Clear All Data</button>
+  </div>
+  <button id="debug-toggle" onclick="document.getElementById('debug-menu').classList.toggle('open')">🛠</button>
 </div>
 
 </body>
