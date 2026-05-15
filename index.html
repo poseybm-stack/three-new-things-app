@@ -2818,20 +2818,47 @@ setInterval(() => {
 // Show debug panel with secret tap (tap masthead title 5 times)
 (function() {
   let tapCount = 0, tapTimer;
-  document.addEventListener('DOMContentLoaded', () => {
+  function attachDebugTrigger() {
     const logo = document.querySelector('.logo');
     if (!logo) return;
+
+    // 5 quick taps
     logo.addEventListener('click', () => {
       tapCount++;
       clearTimeout(tapTimer);
-      tapTimer = setTimeout(() => { tapCount = 0; }, 2000);
+      tapTimer = setTimeout(() => { tapCount = 0; }, 2500);
       if (tapCount >= 5) {
         tapCount = 0;
-        const panel = document.getElementById('debug-panel');
-        panel.style.display = panel.style.display === 'none' ? 'block' : 'none';
+        toggleDebugPanel();
       }
     });
-  });
+
+    // Long press (hold 2 seconds)
+    let pressTimer;
+    logo.addEventListener('touchstart', () => {
+      pressTimer = setTimeout(() => { toggleDebugPanel(); }, 2000);
+    }, { passive: true });
+    logo.addEventListener('touchend', () => clearTimeout(pressTimer), { passive: true });
+    logo.addEventListener('touchmove', () => clearTimeout(pressTimer), { passive: true });
+  }
+
+  function toggleDebugPanel() {
+    const panel = document.getElementById('debug-panel');
+    if (!panel) return;
+    const isVisible = panel.style.display === 'block';
+    panel.style.display = isVisible ? 'none' : 'block';
+    if (!isVisible) {
+      // Flash to confirm
+      panel.style.opacity = '0';
+      setTimeout(() => { panel.style.opacity = '1'; }, 50);
+    }
+  }
+
+  if (document.readyState === 'loading') {
+    document.addEventListener('DOMContentLoaded', attachDebugTrigger);
+  } else {
+    attachDebugTrigger();
+  }
 })();
 
 // Sample missed questions for simulation
