@@ -500,18 +500,21 @@ body{
 /* ── CROSSWORD ── */
 /* ── CROSSWORD ── */
 #pg-crossword {
-  display: flex;
   flex-direction: column;
-  height: 100vh;
   overflow: hidden;
+  background: #f7f3ec;
+  padding: 0 !important;
+}
+#pg-crossword.active {
+  display: flex;
   position: fixed;
   inset: 0;
   max-width: 540px;
   margin: 0 auto;
-  background: #f7f3ec;
+  height: 100vh;
+  height: 100dvh;
   z-index: 50;
 }
-#pg-crossword.page { padding: 0; }
 
 /* Top bar */
 .cw-topbar {
@@ -545,6 +548,7 @@ body{
   justify-content: center;
   padding: 8px;
   min-height: 0;
+  overflow: hidden;
   background: #f7f3ec;
 }
 .cw-grid {
