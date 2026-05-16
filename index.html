@@ -29,7 +29,7 @@ body{
 /* MASTHEAD */
 .masthead{padding:22px 26px 0;text-align:center;background:#f7f3ec;border-bottom:1px solid #ddd6c8}
 .eyebrow{font-family:'IBM Plex Mono',monospace;font-size:8.5px;letter-spacing:.32em;color:#a89e8e;text-transform:uppercase;margin-bottom:7px}
-.logo{font-family:'Playfair Display',Georgia,serif;font-size:clamp(34px,10vw,52px);font-weight:700;line-height:.92;color:#2a2520}
+.logo{font-family:'Playfair Display',Georgia,serif;font-size:clamp(34px,10vw,52px);font-weight:700;line-height:.92;color:#2a2520;user-select:none;-webkit-user-select:none;-webkit-touch-callout:none;}
 .double-rule{border:none;border-top:3px double #2a2520;margin:11px 0 0}
 .dateline{display:flex;justify-content:space-between;align-items:center;padding:5px 0 9px;font-family:'IBM Plex Mono',monospace;font-size:8.5px;letter-spacing:.15em;color:#a89e8e;text-transform:uppercase}
 .life-dots{display:flex;gap:5px;align-items:center}
@@ -498,213 +498,211 @@ body{
 }
 
 /* ── CROSSWORD ── */
-#pg-crossword { overflow-x: hidden; }
+/* ── CROSSWORD ── */
+#pg-crossword {
+  display: flex;
+  flex-direction: column;
+  height: 100vh;
+  overflow: hidden;
+  position: fixed;
+  inset: 0;
+  max-width: 540px;
+  margin: 0 auto;
+  background: #f7f3ec;
+  z-index: 50;
+}
+#pg-crossword.page { padding: 0; }
 
-.cw-header {
-  padding: 22px 26px 16px;
+/* Top bar */
+.cw-topbar {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 10px 16px 8px;
   border-bottom: 1px solid #ddd6c8;
-  margin-bottom: 20px;
+  flex-shrink: 0;
+  background: #f7f3ec;
 }
-.cw-eyebrow {
-  font-family: 'IBM Plex Mono', monospace;
-  font-size: 8.5px;
-  letter-spacing: .32em;
-  color: #9e3020;
-  text-transform: uppercase;
-  margin-bottom: 6px;
-}
-.cw-title {
-  font-family: 'Playfair Display', Georgia, serif;
-  font-size: clamp(28px, 7vw, 40px);
-  font-weight: 700;
-  color: #2a2520;
-  line-height: 1;
-  margin-bottom: 6px;
-}
-.cw-sub {
+.cw-topbar-title {
   font-family: 'IBM Plex Mono', monospace;
   font-size: 9px;
-  letter-spacing: .12em;
+  letter-spacing: .28em;
+  color: #a89e8e;
+  text-transform: uppercase;
+}
+.cw-topbar-count {
+  font-family: 'IBM Plex Mono', monospace;
+  font-size: 9px;
+  letter-spacing: .1em;
   color: #a89e8e;
 }
 
-/* Grid */
-.cw-grid-wrap {
-  overflow-x: auto;
-  padding: 0 26px 20px;
-  -webkit-overflow-scrolling: touch;
+/* Grid area — fills available space, scales to fit */
+.cw-grid-area {
+  flex: 1;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 8px;
+  min-height: 0;
+  background: #f7f3ec;
 }
 .cw-grid {
-  display: inline-grid;
-  gap: 2px;
+  display: grid;
+  gap: 1.5px;
   background: #2a2520;
   border: 2px solid #2a2520;
-  margin: 0 auto;
 }
 .cw-cell {
-  width: 34px;
-  height: 34px;
   background: #f7f3ec;
   position: relative;
   display: flex;
   align-items: center;
   justify-content: center;
+  cursor: pointer;
+  -webkit-tap-highlight-color: transparent;
 }
-.cw-cell.black {
-  background: #2a2520;
-}
-.cw-cell.active {
-  background: rgba(158,48,32,0.12);
-}
-.cw-cell.word-highlight {
-  background: rgba(232,220,200,0.8);
-}
-.cw-cell.correct-cell {
-  background: rgba(42,96,64,0.15);
-}
+.cw-cell.black { background: #2a2520; cursor: default; }
+.cw-cell.active { background: rgba(158,48,32,0.18); }
+.cw-cell.word-highlight { background: #e8e0d0; }
+.cw-cell.correct-cell { background: rgba(42,96,64,0.12); }
 .cw-cell-num {
   position: absolute;
   top: 1px;
-  left: 2px;
+  left: 1.5px;
   font-family: 'IBM Plex Mono', monospace;
-  font-size: 7px;
-  color: #6b6058;
   line-height: 1;
+  color: #6b6058;
 }
 .cw-cell-letter {
   font-family: 'Playfair Display', Georgia, serif;
-  font-size: 16px;
   font-weight: 700;
   color: #2a2520;
   text-transform: uppercase;
   user-select: none;
+  line-height: 1;
 }
-.cw-cell-letter.revealed {
-  color: #9e3020;
-  font-style: italic;
-}
+.cw-cell-letter.revealed { color: #9e3020; font-style: italic; }
 
-/* Hidden input to capture keyboard */
-#cw-input {
-  position: absolute;
-  opacity: 0;
-  width: 1px;
-  height: 1px;
-  top: -9999px;
-}
-
-/* Clues */
-.cw-clues {
-  padding: 0 26px;
-  margin-bottom: 24px;
-}
-.cw-clue-section {
-  margin-bottom: 20px;
-}
-.cw-clue-head {
-  font-family: 'IBM Plex Mono', monospace;
-  font-size: 8.5px;
-  letter-spacing: .28em;
-  color: #a89e8e;
-  text-transform: uppercase;
-  margin-bottom: 10px;
-  border-bottom: 1px solid #ddd6c8;
-  padding-bottom: 6px;
-}
-.cw-clue {
+/* Active clue bar */
+.cw-clue-bar {
+  flex-shrink: 0;
+  background: #2a2520;
+  color: #f7f3ec;
+  padding: 10px 14px;
   display: flex;
+  align-items: center;
   gap: 10px;
-  padding: 8px 0;
-  border-bottom: 1px solid #f0ece3;
+  min-height: 52px;
   cursor: pointer;
   -webkit-tap-highlight-color: transparent;
 }
-.cw-clue.active-clue {
-  background: rgba(158,48,32,0.05);
-  margin: 0 -8px;
-  padding: 8px 8px;
-  border-radius: 2px;
-}
-.cw-clue-num {
+.cw-clue-bar-num {
   font-family: 'IBM Plex Mono', monospace;
   font-size: 10px;
-  color: #a89e8e;
+  color: rgba(255,255,255,.5);
   flex-shrink: 0;
-  width: 20px;
-  padding-top: 2px;
+  width: 24px;
 }
-.cw-clue-text {
-  font-size: 13px;
-  line-height: 1.5;
-  color: #2a2520;
+.cw-clue-bar-text {
+  font-family: 'Playfair Display', Georgia, serif;
+  font-size: 14px;
+  line-height: 1.35;
+  flex: 1;
 }
-.cw-clue.solved-clue .cw-clue-text {
-  color: #a89e8e;
-  text-decoration: line-through;
+.cw-clue-bar-dir {
+  font-family: 'IBM Plex Mono', monospace;
+  font-size: 8px;
+  letter-spacing: .15em;
+  color: rgba(255,255,255,.4);
+  text-transform: uppercase;
+  flex-shrink: 0;
 }
+.cw-clue-nav {
+  display: flex;
+  gap: 6px;
+  flex-shrink: 0;
+}
+.cw-clue-nav-btn {
+  background: rgba(255,255,255,.12);
+  border: none;
+  color: #f7f3ec;
+  font-size: 16px;
+  width: 30px;
+  height: 30px;
+  border-radius: 4px;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  -webkit-tap-highlight-color: transparent;
+}
+.cw-clue-nav-btn:active { background: rgba(255,255,255,.25); }
 
 /* Keyboard */
 .cw-keyboard {
-  position: sticky;
-  bottom: 0;
-  background: #ede9e0;
-  border-top: 1px solid #ddd6c8;
-  padding: 10px 8px 20px;
-  z-index: 10;
+  flex-shrink: 0;
+  background: #ddd6c8;
+  padding: 6px 4px 12px;
 }
 .cw-kb-row {
   display: flex;
   justify-content: center;
-  gap: 5px;
-  margin-bottom: 5px;
+  gap: 4px;
+  margin-bottom: 4px;
 }
 .cw-key {
   background: #f7f3ec;
-  border: 1px solid #c8c0b2;
+  border: none;
+  border-bottom: 2px solid #b8b0a0;
   border-radius: 4px;
   font-family: 'IBM Plex Mono', monospace;
-  font-size: 13px;
+  font-size: 14px;
+  font-weight: 500;
   color: #2a2520;
-  padding: 8px 0;
-  min-width: 30px;
-  text-align: center;
-  cursor: pointer;
-  -webkit-tap-highlight-color: transparent;
-  user-select: none;
-  transition: background 0.1s;
-  flex: 1;
-  max-width: 36px;
-}
-.cw-key:active { background: #ddd6c8; }
-.cw-key.wide { max-width: 52px; font-size: 10px; letter-spacing: .05em; }
-
-/* Loading / Complete states */
-.cw-loading {
+  height: 40px;
   display: flex;
-  flex-direction: column;
   align-items: center;
   justify-content: center;
-  min-height: 50vh;
-  gap: 18px;
-  padding: 40px 26px;
-  text-align: center;
+  cursor: pointer;
+  user-select: none;
+  -webkit-tap-highlight-color: transparent;
+  flex: 1;
+  max-width: 34px;
+  transition: background .08s;
 }
-.cw-complete {
-  padding: 40px 26px;
-  text-align: center;
+.cw-key:active { background: #c8c0b2; transform: translateY(1px); }
+.cw-key.wide { max-width: 48px; font-size: 10px; letter-spacing: .03em; }
+
+#cw-input {
+  position: absolute; opacity: 0; width: 1px; height: 1px; top: -9999px;
 }
+
+/* Loading */
+.cw-loading {
+  display: flex; flex-direction: column; align-items: center;
+  justify-content: center; min-height: 60vh; gap: 18px;
+  padding: 40px 26px; text-align: center;
+}
+
+/* Complete */
+.cw-complete-overlay {
+  position: fixed; inset: 0; z-index: 200;
+  background: #f7f3ec;
+  display: flex; flex-direction: column;
+  align-items: center; justify-content: center;
+  padding: 40px 28px; text-align: center;
+  animation: fadeIn .4s ease both;
+}
+.cw-complete-icon { font-size: 52px; margin-bottom: 20px; }
 .cw-complete-head {
   font-family: 'Playfair Display', Georgia, serif;
-  font-size: clamp(32px, 8vw, 52px);
-  font-weight: 700;
-  color: #2a2520;
-  margin-bottom: 10px;
+  font-size: clamp(32px, 8vw, 48px);
+  font-weight: 700; color: #2a2520; margin-bottom: 10px;
 }
 .cw-complete-sub {
-  font-size: 15px;
-  font-style: italic;
-  color: #6b6058;
-  margin-bottom: 32px;
+  font-size: 15px; font-style: italic; color: #6b6058;
+  line-height: 1.75; margin-bottom: 32px;
 }
 
 /* ── DEBUG PANEL ── */
@@ -2429,93 +2427,95 @@ function renderCrossword(words, gridData, numbered, cellNumbers) {
   CW.size = { rows, cols };
   CW.cellNumbers = cellNumbers;
 
+  // Work out cell size to fit screen
+  const padding = 20;
+  const screenW = Math.min(window.innerWidth, 540) - padding * 2;
+  // Reserve space for topbar(40) + cluebar(52) + keyboard(~160) + some padding
+  const screenH = window.innerHeight - 40 - 52 - 165;
+  const cellByW = Math.floor((screenW - (cols - 1) * 1.5) / cols);
+  const cellByH = Math.floor((screenH - (rows - 1) * 1.5) / rows);
+  const cellSize = Math.max(18, Math.min(cellByW, cellByH, 36));
+  const numSize = Math.max(6, Math.floor(cellSize * 0.28));
+  const letterSize = Math.max(10, Math.floor(cellSize * 0.52));
+
+  const solvedCount = () => {
+    return CW.words.filter(w => {
+      for (let i = 0; i < w.answer.length; i++) {
+        const r = w.dir === 'across' ? w.row : w.row + i;
+        const cc = w.dir === 'across' ? w.col + i : w.col;
+        if (CW.userGrid[r][cc] !== w.answer[i]) return false;
+      }
+      return true;
+    }).length;
+  };
+
   const content = $('cw-content');
   content.innerHTML = `
-    <div class="cw-header">
-      <div class="cw-eyebrow">Sunday Edition</div>
-      <div class="cw-title">Your Weekly Crossword</div>
-      <div class="cw-sub">${numbered.length} clues from this week's misses</div>
+    <div class="cw-topbar">
+      <div class="cw-topbar-title">Sunday Crossword</div>
+      <div class="cw-topbar-count" id="cw-solved-count">0 / ${numbered.length} solved</div>
     </div>
-    <div class="cw-grid-wrap">
-      <div class="cw-grid" id="cw-grid" style="grid-template-columns: repeat(${cols}, 34px); grid-template-rows: repeat(${rows}, 34px);"></div>
-    </div>
-    <div class="cw-clues">
-      <div class="cw-clue-section">
-        <div class="cw-clue-head">Across</div>
-        <div id="cw-clues-across"></div>
-      </div>
-      <div class="cw-clue-section">
-        <div class="cw-clue-head">Down</div>
-        <div id="cw-clues-down"></div>
+    <div class="cw-grid-area">
+      <div class="cw-grid" id="cw-grid"
+        style="grid-template-columns: repeat(${cols}, ${cellSize}px);
+               grid-template-rows: repeat(${rows}, ${cellSize}px);">
       </div>
     </div>
-    <div style="height:160px;"></div>
+    <div class="cw-clue-bar" id="cw-clue-bar" onclick="cwToggleDirection()">
+      <div class="cw-clue-bar-num" id="cw-clue-num">1</div>
+      <div class="cw-clue-bar-text" id="cw-clue-text">—</div>
+      <div style="display:flex;flex-direction:column;align-items:flex-end;gap:4px;flex-shrink:0;">
+        <div class="cw-clue-bar-dir" id="cw-clue-dir">ACROSS</div>
+        <div class="cw-clue-nav">
+          <button class="cw-clue-nav-btn" onclick="event.stopPropagation();cwPrevClue()">‹</button>
+          <button class="cw-clue-nav-btn" onclick="event.stopPropagation();cwNextClue()">›</button>
+        </div>
+      </div>
+    </div>
   `;
 
-  // Build grid cells
+  // Build cells
   const gridEl = $('cw-grid');
   for (let r = 0; r < rows; r++) {
-    for (let c = 0; c < cols; c++) {
+    for (let cc = 0; cc < cols; cc++) {
       const cell = document.createElement('div');
-      cell.className = 'cw-cell' + (grid[r][c] === null ? ' black' : '');
-      cell.id = `cw-${r}-${c}`;
+      cell.className = 'cw-cell' + (grid[r][cc] === null ? ' black' : '');
+      cell.id = `cw-${r}-${cc}`;
+      cell.style.width = cellSize + 'px';
+      cell.style.height = cellSize + 'px';
 
-      if (grid[r][c] !== null) {
-        const numKey = `${r},${c}`;
+      if (grid[r][cc] !== null) {
+        const numKey = `${r},${cc}`;
         if (cellNumbers[numKey]) {
           const num = document.createElement('div');
           num.className = 'cw-cell-num';
+          num.style.fontSize = numSize + 'px';
           num.textContent = cellNumbers[numKey];
           cell.appendChild(num);
         }
         const letter = document.createElement('div');
         letter.className = 'cw-cell-letter';
+        letter.style.fontSize = letterSize + 'px';
         cell.appendChild(letter);
-        cell.addEventListener('click', () => cwCellClick(r, c));
+        cell.addEventListener('click', () => cwCellClick(r, cc));
       }
       gridEl.appendChild(cell);
     }
   }
 
-  // Build clue lists
-  const across = numbered.filter(w => w.dir === 'across').sort((a,b) => a.number - b.number);
-  const down = numbered.filter(w => w.dir === 'down').sort((a,b) => a.number - b.number);
-
-  across.forEach(w => {
-    const div = document.createElement('div');
-    div.className = 'cw-clue';
-    div.id = `clue-across-${w.number}`;
-    div.innerHTML = `<span class="cw-clue-num">${w.number}</span><span class="cw-clue-text">${w.clue}</span>`;
-    div.addEventListener('click', () => cwSelectWord(w));
-    $('cw-clues-across').appendChild(div);
-  });
-
-  down.forEach(w => {
-    const div = document.createElement('div');
-    div.className = 'cw-clue';
-    div.id = `clue-down-${w.number}`;
-    div.innerHTML = `<span class="cw-clue-num">${w.number}</span><span class="cw-clue-text">${w.clue}</span>`;
-    div.addEventListener('click', () => cwSelectWord(w));
-    $('cw-clues-down').appendChild(div);
-  });
-
-  // Render keyboard
   renderKeyboard();
-
-  // Select first word
   if (numbered.length > 0) cwSelectWord(numbered[0]);
 }
 
 function renderKeyboard() {
+  const old = document.querySelector('.cw-keyboard');
+  if (old) old.remove();
+
   const rows = [
     ['Q','W','E','R','T','Y','U','I','O','P'],
     ['A','S','D','F','G','H','J','K','L'],
     ['DEL','Z','X','C','V','B','N','M','→'],
   ];
-
-  // Remove old keyboard if exists
-  const old = document.querySelector('.cw-keyboard');
-  if (old) old.remove();
 
   const kb = document.createElement('div');
   kb.className = 'cw-keyboard';
@@ -2527,6 +2527,7 @@ function renderKeyboard() {
       const key = document.createElement('div');
       key.className = 'cw-key' + (k === 'DEL' || k === '→' ? ' wide' : '');
       key.textContent = k;
+      key.addEventListener('touchstart', (e) => { e.preventDefault(); cwKeyPress(k); }, { passive: false });
       key.addEventListener('click', () => cwKeyPress(k));
       rowEl.appendChild(key);
     });
@@ -2534,6 +2535,43 @@ function renderKeyboard() {
   });
 
   $('pg-crossword').appendChild(kb);
+}
+
+function cwUpdateSolvedCount() {
+  const el = $('cw-solved-count');
+  if (!el) return;
+  const total = CW.words.length;
+  let solved = 0;
+  CW.words.forEach(w => {
+    for (let i = 0; i < w.answer.length; i++) {
+      const r = w.dir === 'across' ? w.row : w.row + i;
+      const cc = w.dir === 'across' ? w.col + i : w.col;
+      if (CW.userGrid[r][cc] !== w.answer[i]) return;
+    }
+    solved++;
+  });
+  el.textContent = solved + ' / ' + total + ' solved';
+}
+
+function cwPrevClue() {
+  const sorted = CW.words.slice().sort((a,b) => a.number - b.number || (a.dir === 'across' ? -1 : 1));
+  const idx = sorted.findIndex(w => w === CW.activeWord);
+  const prev = sorted[(idx - 1 + sorted.length) % sorted.length];
+  cwSelectWord(prev);
+}
+
+function cwNextClue() {
+  const sorted = CW.words.slice().sort((a,b) => a.number - b.number || (a.dir === 'across' ? -1 : 1));
+  const idx = sorted.findIndex(w => w === CW.activeWord);
+  const next = sorted[(idx + 1) % sorted.length];
+  cwSelectWord(next);
+}
+
+function cwToggleDirection() {
+  if (!CW.activeCell) return;
+  CW.activeDir = CW.activeDir === 'across' ? 'down' : 'across';
+  const { row, col } = CW.activeCell;
+  cwCellClick(row, col);
 }
 
 // ── INTERACTION ──
@@ -2574,21 +2612,24 @@ function cwSelectWord(word, cell) {
   if (!cell) {
     for (let i = 0; i < word.answer.length; i++) {
       const r = word.dir === 'across' ? word.row : word.row + i;
-      const c = word.dir === 'across' ? word.col + i : word.col;
-      if (!CW.userGrid[r][c]) {
-        CW.activeCell = { row: r, col: c };
+      const cc = word.dir === 'across' ? word.col + i : word.col;
+      if (!CW.userGrid[r][cc]) {
+        CW.activeCell = { row: r, col: cc };
         break;
       }
     }
   }
 
+  // Update clue bar
+  const numEl = $('cw-clue-num');
+  const txtEl = $('cw-clue-text');
+  const dirEl = $('cw-clue-dir');
+  if (numEl) numEl.textContent = word.number;
+  if (txtEl) txtEl.textContent = word.clue;
+  if (dirEl) dirEl.textContent = word.dir.toUpperCase();
+
   cwUpdateHighlights();
 
-  // Scroll clue into view
-  const clueEl = $(`clue-${word.dir}-${word.number}`);
-  if (clueEl) clueEl.scrollIntoView({ block: 'nearest', behavior: 'smooth' });
-
-  // Focus hidden input for hardware keyboard support
   const inp = $('cw-input');
   if (inp) { inp.value = ''; inp.focus(); }
 }
@@ -2688,17 +2729,14 @@ function cwCheckComplete() {
     setTimeout(showCrosswordComplete, 400);
   }
 
-  // Mark solved clues
+  // Color correct cells and update count
   CW.words.forEach(w => {
     let solved = true;
     for (let i = 0; i < w.answer.length; i++) {
       const r = w.dir === 'across' ? w.row : w.row + i;
-      const c = w.dir === 'across' ? w.col + i : w.col;
-      if (CW.userGrid[r][c] !== w.answer[i]) { solved = false; break; }
+      const cc = w.dir === 'across' ? w.col + i : w.col;
+      if (CW.userGrid[r][cc] !== w.answer[i]) { solved = false; break; }
     }
-    const clueEl = $(`clue-${w.dir}-${w.number}`);
-    if (clueEl) clueEl.classList.toggle('solved-clue', solved);
-    // Color correct cells
     if (solved) {
       for (let i = 0; i < w.answer.length; i++) {
         const r = w.dir === 'across' ? w.row : w.row + i;
@@ -2708,24 +2746,26 @@ function cwCheckComplete() {
       }
     }
   });
+  cwUpdateSolvedCount();
 }
 
 function showCrosswordComplete() {
-  const content = $('cw-content');
-  content.innerHTML = `
-    <div class="cw-complete" style="padding:60px 26px;">
-      <div style="font-size:48px;margin-bottom:20px;">✦</div>
-      <div class="cw-complete-head">Puzzle Complete</div>
-      <div class="cw-complete-sub">You filled in every answer from this week's misses. Come back Monday for a fresh edition.</div>
-      <div style="margin:32px 0;padding:20px 0;border-top:1px solid #ddd6c8;border-bottom:1px solid #ddd6c8;">
-        <div style="font-family:'IBM Plex Mono',monospace;font-size:8.5px;letter-spacing:.28em;color:#a89e8e;text-transform:uppercase;margin-bottom:12px;">Next Week Starts</div>
-        <div style="font-family:'Playfair Display',Georgia,serif;font-size:22px;font-weight:700;color:#2a2520;">Monday</div>
-      </div>
+  const overlay = document.createElement('div');
+  overlay.className = 'cw-complete-overlay';
+  overlay.innerHTML = `
+    <div class="cw-complete-icon">✦</div>
+    <div class="cw-complete-head">Puzzle Complete</div>
+    <div class="cw-complete-sub">You filled in every answer from this week's misses.<br>Come back Monday for a fresh edition.</div>
+    <div style="width:100%;padding:20px 0;border-top:1px solid #ddd6c8;border-bottom:1px solid #ddd6c8;margin-bottom:28px;">
+      <div style="font-family:'IBM Plex Mono',monospace;font-size:8.5px;letter-spacing:.28em;color:#a89e8e;text-transform:uppercase;margin-bottom:8px;">Next Edition</div>
+      <div style="font-family:'Playfair Display',Georgia,serif;font-size:24px;font-weight:700;color:#2a2520;">Monday</div>
     </div>
+    <button onclick="showPage('pg-start');this.closest('.cw-complete-overlay').remove();"
+      style="width:100%;background:#2a2520;color:#f7f3ec;border:none;font-family:'Playfair Display',Georgia,serif;font-size:17px;font-style:italic;padding:14px 24px;cursor:pointer;">
+      Back to Home
+    </button>
   `;
-  // Remove keyboard
-  const kb = document.querySelector('.cw-keyboard');
-  if (kb) kb.remove();
+  $('pg-crossword').appendChild(overlay);
 }
 
 // Hardware keyboard support
