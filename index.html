@@ -14,6 +14,10 @@ html{
   color-scheme:light;
   -webkit-text-size-adjust:100%;
 }
+@media(min-width:600px){
+  html{ background:#ddd6c8; }
+  body{ margin:0 auto; }
+}
 body{
   background:#f7f3ec;
   color:#2a2520;
@@ -24,6 +28,7 @@ body{
   border-left:1px solid #ddd6c8;
   border-right:1px solid #ddd6c8;
   -webkit-font-smoothing:antialiased;
+  box-shadow:0 0 80px rgba(0,0,0,0.06);
 }
 
 /* MASTHEAD */
@@ -572,9 +577,9 @@ body{
   -webkit-tap-highlight-color: transparent;
 }
 .cw-cell.black { background: #2a2520; cursor: default; }
-.cw-cell.active { background: rgba(158,48,32,0.18); }
-.cw-cell.word-highlight { background: #e8e0d0; }
-.cw-cell.correct-cell { background: rgba(42,96,64,0.12); }
+.cw-cell.active { background: rgba(158,48,32,0.12); }
+.cw-cell.word-highlight { background: #ede8df; }
+.cw-cell.correct-cell { background: rgba(42,96,64,0.08); }
 .cw-cell-num {
   position: absolute;
   top: 1px;
@@ -1019,7 +1024,7 @@ async function callClaude(prompt, maxTokens=1400) {
         "anthropic-dangerous-direct-browser-access": "true",
       },
       body,
-    }), 12000);
+    }), 8000);
     if (!res.ok) throw new Error(`HTTP ${res.status}`);
     const data = await res.json();
     const text = data.content?.find(b=>b.type==="text")?.text;
@@ -1039,7 +1044,7 @@ async function callClaude(prompt, maxTokens=1400) {
         "anthropic-version": "2023-06-01",
       },
       body,
-    }), 12000);
+    }), 8000);
     if (!res.ok) throw new Error(`HTTP ${res.status}`);
     const data = await res.json();
     const text = data.content?.find(b=>b.type==="text")?.text;
@@ -1374,11 +1379,9 @@ async function startGame() {
   $("mast-eyebrow").textContent = `Daily Edition · ${topicLabel}`;
 
   try {
-    // Race: fetch batch vs 10s timeout fallback
-    await Promise.race([
-      fetchBatch(),
-      new Promise(resolve => setTimeout(() => { fetchFromLocalBank(); resolve(); }, 15000))
-    ]);
+    // Use local bank immediately for fast start, try API in background
+    fetchFromLocalBank();
+    fetchBatch().catch(() => {}); // background — replenishes queue with AI questions
     if (!queue.length) fetchFromLocalBank();
     showPage("pg-question");
     nextQuestion();
@@ -2221,11 +2224,10 @@ async function generateCrossword() {
   const weekData = loadWeekData();
   if (!weekData) return null;
 
-  // Collect all misses from the week
   const allMisses = weekData.days.flatMap(d => d.missed || []);
   if (allMisses.length < 3) return null;
 
-  // Deduplicate and take up to 10
+  // Deduplicate, filter to good crossword lengths (3-12 chars)
   const unique = [];
   const seen = new Set();
   for (const m of allMisses) {
@@ -2235,32 +2237,13 @@ async function generateCrossword() {
       unique.push({ answer: key, clue: m.question, topic: m.topic });
     }
   }
-  const words = unique.slice(0, 10);
 
-  const wordList = words.map((w,i) => `${i+1}. Answer: "${w.answer}" | Original question: "${w.clue}"`).join('\n');
-
-  const prompt = `You are building a crossword puzzle. Given these answers and their original trivia questions, write a SHORT crossword-style clue for each answer. The clue should hint at the answer without giving it away directly — like a real crossword clue, not just the original question.
-
-${wordList}
-
-Return ONLY a valid JSON array, no markdown:
-[{"answer":"WORD","clue":"Crossword-style clue here"},...]
-
-Keep clues under 12 words. Be clever but fair.`;
-
-  try {
-    const raw = await callClaude(prompt, 800);
-    const clean = raw.replace(/\`\`\`json|\`\`\`/g,'').trim();
-    const clued = JSON.parse(clean);
-    // Merge clues back
-    return clued.map(item => ({
-      answer: item.answer.toUpperCase().replace(/[^A-Z]/g,''),
-      clue: item.clue,
-    })).filter(w => w.answer.length >= 3);
-  } catch(e) {
-    // Fallback: use original questions as clues
-    return words.map(w => ({ answer: w.answer, clue: w.clue }));
-  }
+  // Use original questions as clues directly — no extra API call needed
+  // This makes crossword generation instant
+  return unique.slice(0, 10).map(w => ({
+    answer: w.answer,
+    clue: w.clue,
+  }));
 }
 
 // ── STEP 2: Place words into a grid ──
