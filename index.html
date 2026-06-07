@@ -820,6 +820,78 @@ body{
 }
 .debug-btn:hover { background: rgba(255,255,255,.1); }
 .debug-btn.danger { border-color: rgba(158,48,32,.5); color: #e87060; }
+
+/* ── iOS HOME SCREEN BANNER ── */
+#ios-banner {
+  position: fixed;
+  bottom: 0;
+  left: 50%;
+  transform: translateX(-50%);
+  width: 100%;
+  max-width: 540px;
+  background: #2a2520;
+  color: #f7f3ec;
+  padding: 16px 20px 28px;
+  z-index: 8000;
+  animation: slideUpCard 0.4s cubic-bezier(0.34,1.3,0.64,1) both;
+}
+.ios-banner-row {
+  display: flex;
+  align-items: flex-start;
+  gap: 14px;
+  margin-bottom: 14px;
+}
+.ios-banner-icon {
+  width: 44px;
+  height: 44px;
+  background: #f7f3ec;
+  border-radius: 10px;
+  flex-shrink: 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-family: 'Playfair Display', Georgia, serif;
+  font-size: 18px;
+  font-weight: 700;
+  color: #2a2520;
+}
+.ios-banner-text { flex: 1; }
+.ios-banner-title {
+  font-family: 'Playfair Display', Georgia, serif;
+  font-size: 15px;
+  font-weight: 700;
+  margin-bottom: 4px;
+}
+.ios-banner-sub {
+  font-size: 12px;
+  line-height: 1.5;
+  color: rgba(255,255,255,.65);
+}
+.ios-banner-steps {
+  font-family: 'IBM Plex Mono', monospace;
+  font-size: 10px;
+  letter-spacing: .05em;
+  color: rgba(255,255,255,.55);
+  line-height: 1.9;
+  margin-bottom: 14px;
+  padding: 10px 12px;
+  background: rgba(255,255,255,.07);
+  border-radius: 4px;
+}
+.ios-banner-steps b { color: rgba(255,255,255,.85); }
+.ios-banner-dismiss {
+  width: 100%;
+  background: transparent;
+  border: 1px solid rgba(255,255,255,.2);
+  color: rgba(255,255,255,.6);
+  font-family: 'IBM Plex Mono', monospace;
+  font-size: 10px;
+  letter-spacing: .15em;
+  text-transform: uppercase;
+  padding: 10px;
+  cursor: pointer;
+  border-radius: 2px;
+}
 </style>
 </head>
 <body>
@@ -1667,115 +1739,23 @@ async function showResults() {
 
   if (missedList.length === 0) return;
 
-  const EXPLAINERS = {
-  "In which year did the Berlin Wall fall?": "The Berlin Wall fell on November 9, 1989, after the East German government unexpectedly announced that citizens could cross freely. Crowds gathered at checkpoints and began tearing the wall apart with hammers, in scenes that symbolized the end of the Cold War and led directly to German reunification in October 1990.",
-  "What year did the Titanic sink?": "The RMS Titanic sank on April 15, 1912, less than three hours after striking an iceberg in the North Atlantic on her maiden voyage. Of the 2,224 people aboard, more than 1,500 died — largely because the ship carried only enough lifeboats for about half its passengers, a legal oversight that shocked the world and changed maritime safety law forever.",
-  "Who was the first President of the United States?": "George Washington served as the first U.S. President from 1789 to 1797, setting precedents still followed today — including voluntarily stepping down after two terms. He was unanimously elected by the Electoral College both times, a feat never repeated, and is the only president to have a state named after him.",
-  "Which empire was ruled by Genghis Khan?": "Genghis Khan founded the Mongol Empire in 1206 and built it into the largest contiguous land empire in history, stretching from the Pacific Ocean to Eastern Europe. He united nomadic tribes through a combination of military genius and meritocracy, promoting soldiers based on ability rather than birth — a radical idea for the time.",
-  "In what year did World War II end?": "World War II ended in 1945 — first in Europe on May 8 (V-E Day) when Germany surrendered, then in the Pacific on September 2 (V-J Day) when Japan formally surrendered aboard the USS Missouri. The war killed an estimated 70–85 million people, making it the deadliest conflict in human history.",
-  "Which country was the first to give women the right to vote?": "New Zealand became the first self-governing country to grant women the right to vote in national elections in 1893, largely due to the campaigning of suffragist Kate Sheppard. Interestingly, women in New Zealand couldn't stand for parliament themselves until 1919 — 26 years later.",
-  "Who was the Egyptian queen who famously allied with Julius Caesar?": "Cleopatra VII allied with Julius Caesar in 48 BCE, using the partnership to secure her hold on the Egyptian throne against her brother Ptolemy XIII. She later formed a powerful alliance with Mark Antony. Despite her Greek Macedonian ancestry, she was famously the first ruler of the Ptolemaic dynasty to speak the Egyptian language.",
-  "The French Revolution began in which year?": "The French Revolution began in 1789 with widespread discontent over food shortages, heavy taxation, and the vast inequality between the aristocracy and common people. The storming of the Bastille prison on July 14 became its defining symbol — Bastille Day is still celebrated as France's national holiday.",
-  "Which ancient wonder was located in Alexandria, Egypt?": "The Lighthouse of Alexandria, built on the island of Pharos around 280 BCE, stood roughly 100 meters tall — making it one of the tallest man-made structures in the ancient world for centuries. It guided ships into Alexandria's busy harbor using a mirror that reflected sunlight by day and fire by night, and stood for over 1,500 years before earthquakes brought it down.",
-  "Who was the first man to walk on the moon?": "Neil Armstrong became the first person to walk on the moon on July 20, 1969, during NASA's Apollo 11 mission. His famous words — 'That's one small step for man, one giant leap for mankind' — were broadcast live to an estimated 600 million viewers worldwide, making it one of the most-watched television events in history.",
-  "Which element has the chemical symbol Au?": "Gold's symbol Au comes from the Latin word 'aurum.' It's one of the least reactive chemical elements, which is why it doesn't tarnish or corrode — making it ideal for jewelry, coins, and electronics. All the gold ever mined in human history would fit into roughly three and a half Olympic swimming pools.",
-  "Which planet is known as the Red Planet?": "Mars appears red because its surface is coated in iron oxide — essentially rust. It has the largest volcano in the solar system, Olympus Mons, which stands nearly three times taller than Everest. NASA's Perseverance rover is currently exploring Mars searching for signs of ancient microbial life.",
-  "What is the smallest prime number?": "Two is unique among all prime numbers because it is the only even prime — every other even number is divisible by 2, so none can be prime. Prime numbers are the building blocks of all integers and form the foundation of modern encryption, including the security behind your banking and messaging apps.",
-  "What is the hardest natural substance on Earth?": "Diamond rates 10 on the Mohs hardness scale — the maximum — because its carbon atoms form an extraordinarily strong tetrahedral crystal lattice. Diamonds form roughly 100 miles underground under immense pressure and heat, and are brought to the surface by volcanic eruptions through formations called kimberlite pipes.",
-  "How many bones are in the adult human body?": "Adults have 206 bones, but babies are born with around 270 to 300. Many fuse together during childhood and adolescence — for example, the skull starts as several plates that gradually merge. The smallest bone in the body is the stapes in the inner ear, about the size of a grain of rice.",
-  "What is the chemical formula for water?": "Water (H₂O) is two hydrogen atoms bonded to one oxygen atom. Its bent molecular shape and slight electrical charge give it unique properties — like surface tension, the ability to dissolve more substances than any other liquid, and the unusual fact that its solid form (ice) is less dense than its liquid form, which is why ice floats.",
-  "How many chromosomes do humans have?": "Humans have 46 chromosomes arranged in 23 pairs — one set inherited from each parent. The 23rd pair determines biological sex: XX for female, XY for male. Having an extra or missing chromosome causes conditions like Down syndrome (an extra chromosome 21) or Turner syndrome (a missing X chromosome).",
-  "What is the speed of light in a vacuum?": "Light travels at approximately 299,792 kilometers per second in a vacuum — so fast that it could circle Earth about 7.5 times in a single second. Einstein's theory of special relativity established this as the ultimate speed limit of the universe. The light you see from the sun is actually about 8 minutes old when it reaches your eyes.",
-  "Which gas makes up most of Earth's atmosphere?": "Nitrogen makes up about 78% of Earth's atmosphere, with oxygen at roughly 21% and argon at about 0.9%. Despite being all around us, most living organisms can't use atmospheric nitrogen directly — it must first be 'fixed' into usable compounds by specialized bacteria, a process essential to all life on Earth.",
-  "What is the powerhouse of the cell?": "The mitochondria generate energy for cells by converting glucose and oxygen into ATP (adenosine triphosphate) — the molecule that powers almost every cellular process. Uniquely, mitochondria have their own DNA, leading scientists to theorize they were once free-living bacteria that became incorporated into larger cells over a billion years ago.",
-  "What force keeps planets in orbit around the sun?": "Gravity is a fundamental force that attracts all objects with mass to one another. Isaac Newton first described it mathematically in 1687; Einstein later reframed it as the curvature of spacetime in his general theory of relativity. Without gravity, planets would fly off in straight lines rather than following their curved orbital paths.",
-  "What is the capital of Australia?": "Canberra became Australia's capital in 1913 as a deliberate compromise between the rival cities of Sydney and Melbourne, both of which wanted the honor. It was purpose-built in a rural area and designed by American architects Walter Burley Griffin and Marion Mahony Griffin, who won an international competition. Today it's home to about 450,000 people.",
-  "What is the largest ocean on Earth?": "The Pacific Ocean covers more than 165 million square kilometers — larger than all of Earth's landmasses combined. It contains more than half the world's oceanic water and is home to the Mariana Trench, the deepest point on Earth at nearly 11 kilometers below the surface, deeper than Mount Everest is tall.",
-  "What currency is used in Japan?": "The Japanese yen was introduced in 1871 as part of the Meiji government's sweeping modernization program. The word 'yen' (円) means 'round object,' referring to the circular coins of the era. Japan is famous for its vending machines that accept coins — there are roughly 5 million vending machines in the country, one for every 23 people.",
-  "In what country would you find the ancient city of Petra?": "Petra, in southern Jordan, was the capital of the Nabataean Kingdom and was carved directly into rose-red sandstone cliffs around the 4th century BCE. The city's most iconic structure, Al-Khazneh (The Treasury), famously appeared in Indiana Jones and the Last Crusade. Petra was largely unknown to the Western world until 1812.",
-  "What is the longest river in the world?": "The Nile stretches approximately 6,650 kilometers through northeastern Africa, flowing northward through 11 countries before emptying into the Mediterranean Sea. For thousands of years its annual floods deposited rich silt along its banks, making the surrounding land extraordinarily fertile and allowing ancient Egyptian civilization to flourish in the middle of a desert.",
-  "Which country has the most natural lakes?": "Canada contains more than 60% of the world's lakes — approximately 879,800 lakes larger than 10 square kilometers. This is a legacy of the last Ice Age: glaciers carved out vast depressions across the Canadian Shield, which filled with meltwater as temperatures rose. Canada also has more freshwater than any other country on Earth.",
-  "What is the smallest country in the world?": "Vatican City covers just 0.44 square kilometers within the city of Rome, making it the world's smallest country by both area and population (around 800 people). It has been an independent state since the Lateran Treaty of 1929, signed by Mussolini and the Holy See, and is the headquarters of the Roman Catholic Church.",
-  "Which mountain range separates Europe from Asia?": "The Ural Mountains stretch about 2,500 kilometers from the Arctic Ocean to the Ural River in Kazakhstan, forming the traditional boundary between Europe and Asia. They are among the world's oldest mountain ranges, formed over 250 million years ago, and are rich in minerals including iron, copper, gold, and platinum.",
-  "Which African country has the most pyramids?": "Sudan (ancient Nubia) has more pyramids than Egypt — around 200 to 255 compared to Egypt's 130. The Nubian pyramids, built by the rulers of the ancient Kushite kingdoms, are generally taller and narrower than their Egyptian counterparts. They remained largely unknown to the outside world until the 19th century.",
-  "What is the capital of Canada?": "Ottawa became Canada's capital in 1857, chosen by Queen Victoria partly because of its defensible location along the Ottawa River and partly to resolve the rivalry between Toronto and Montreal. Today it's home to Parliament Hill, the National Gallery of Canada, and one of the country's highest concentrations of museums per capita.",
-  "Who wrote Pride and Prejudice?": "Jane Austen published Pride and Prejudice in 1813, having originally drafted it in the 1790s under the title 'First Impressions.' The novel's sharp wit and its heroine Elizabeth Bennet were revolutionary — Austen wrote complex, independent female characters at a time when women had very few legal rights. It has never gone out of print.",
-  "Which Shakespeare play features the character Iago?": "Othello, written around 1603, features Iago as one of literature's most chilling villains — a man who destroys Othello through jealousy, manipulation, and brilliantly concealed malice. The play was groundbreaking for its time in placing a Black man as its tragic hero. Iago speaks more lines than Othello himself.",
-  "Who wrote the Odyssey?": "Homer is credited with composing the Odyssey, the epic poem recounting Odysseus's 10-year journey home after the Trojan War. Scholars debate whether Homer was one person or a tradition of oral poets. The Odyssey is one of the oldest works of Western literature, composed around the 8th century BCE, and has directly inspired countless works from Joyce's Ulysses to the Coen Brothers' O Brother, Where Art Thou?",
-  "In which novel would you find the character Atticus Finch?": "Atticus Finch is the moral center of Harper Lee's To Kill a Mockingbird (1960), a lawyer in 1930s Alabama who defends a Black man falsely accused of a crime. The novel won the Pulitzer Prize and has sold over 40 million copies worldwide. Lee's follow-up, Go Set a Watchman, controversially portrayed an older, more compromised Atticus.",
-  "Who wrote 1984?": "George Orwell wrote 1984 in 1948 while seriously ill with tuberculosis on the Scottish island of Jura. The title came from simply reversing the last two digits of the year he finished it. The novel introduced words like 'doublethink,' 'thoughtcrime,' and 'Big Brother' into everyday language — all still in common use today.",
-  "What is the name of the whale in Moby-Dick?": "In Herman Melville's 1851 novel, the white sperm whale is referred to simply as 'the White Whale' or 'Moby Dick' — 'Moby-Dick' with a hyphen is the book's title. The obsessive Captain Ahab hunts the whale after it bit off his leg. The novel was a commercial failure when published but is now considered one of the greatest American novels ever written.",
-  "Who wrote Crime and Punishment?": "Fyodor Dostoevsky published Crime and Punishment in 1866, writing it in a rush to pay off gambling debts. The novel follows Raskolnikov, a student who murders a pawnbroker and then spirals into psychological torment. Dostoevsky drew on his own experience facing a mock execution and serving years in a Siberian labor camp to portray psychological suffering with devastating realism.",
-  "What dystopian novel features a society divided into factions?": "Divergent (2011), by Veronica Roth, is set in a future Chicago where society is divided into five factions based on virtues: Dauntless (brave), Amity (peaceful), Erudite (intelligent), Candor (honest), and Abnegation (selfless). The protagonist Tris discovers she doesn't fit neatly into any single faction — making her 'Divergent' and dangerous to the ruling order.",
-  "Who wrote One Hundred Years of Solitude?": "Gabriel García Márquez published Cien años de soledad in 1967. The novel follows seven generations of the Buendía family in the fictional town of Macondo, blending magical events with everyday life in the style known as magical realism. It sold 50 million copies and is widely considered the greatest novel written in Spanish. García Márquez won the Nobel Prize in Literature in 1982.",
-  "In which Shakespeare play does the character Ophelia appear?": "Ophelia appears in Hamlet, written around 1600, as the young woman who loves Prince Hamlet. Her descent into madness and drowning — arguably caused by Hamlet's erratic behavior and her father's murder — is one of literature's most tragic subplots. The Pre-Raphaelite painter John Everett Millais' depiction of her floating among flowers is one of the most famous paintings in the world.",
-  "How many strings does a standard violin have?": "The violin's four strings are tuned G, D, A, and E, from lowest to highest pitch. It is the smallest and highest-pitched member of the bowed string family, which also includes viola, cello, and double bass. The violin emerged in 16th-century northern Italy, with the finest instruments — made by Antonio Stradivari — still considered unsurpassed and worth millions today.",
-  "Which band released the album Dark Side of the Moon?": "Pink Floyd released The Dark Side of the Moon in 1973, and it spent an astonishing 741 weeks on the Billboard 200 chart — a record that stood for decades. The album's iconic prism cover was designed by Storm Thorgerson. It reportedly syncs with The Wizard of Oz if you start it at the right moment — a legend the band has always denied but never fully dispelled.",
-  "Which composer wrote the Four Seasons?": "Antonio Vivaldi composed The Four Seasons around 1720 as a set of four violin concertos, each depicting a different season through music and accompanying sonnets. Vivaldi wrote over 500 concertos during his lifetime, though he died in poverty in 1741 and was buried in a simple grave. His work was largely forgotten until Johann Sebastian Bach helped revive interest in it.",
-  "What nationality was Freddie Mercury?": "Freddie Mercury was born Farrokh Bulsara in Zanzibar (now part of Tanzania) to Parsi parents from India. He moved to England as a teenager and co-founded Queen in 1970. His extraordinary vocal range spanned four octaves, and his performance at Live Aid in 1985 is frequently cited as the greatest live rock performance in history.",
-  "How many keys does a standard piano have?": "A standard modern piano has 88 keys — 52 white and 36 black — spanning over seven octaves. This range covers virtually every note used in Western music. The piano was invented by Bartolomeo Cristofori in Italy around 1700; he called it the 'gravicembalo col piano e forte' — meaning 'harpsichord with soft and loud' — because unlike the harpsichord, it could vary in volume.",
-  "Which decade did hip-hop emerge as a genre?": "Hip-hop emerged in the South Bronx, New York, in the early 1970s, born from block parties where DJs isolated percussion breaks from funk and soul records. DJ Kool Herc is widely credited as the genre's founding father. The culture encompassed four elements: DJing, MCing (rapping), breakdancing, and graffiti art. It is now the world's most-streamed music genre.",
-  "Who is known as the King of Pop?": "Michael Jackson earned the title 'King of Pop' through record-breaking albums like Thriller (1982), which remains the best-selling album of all time at over 66 million copies sold. He pioneered music video as an art form and introduced moves like the moonwalk to global audiences during his 1983 Motown 25 TV performance, a moment widely considered the most iconic in pop music history.",
-  "Which instrument does a percussionist play?": "Percussionists play instruments that produce sound by being struck, shaken, or scraped — drums being the most common. The percussion family is the largest in the orchestra and includes timpani, snare drum, xylophone, cymbals, and marimba. Drums are among the oldest musical instruments ever found, with examples dating back over 5,500 years discovered in China.",
-  "What does BPM stand for in music?": "BPM — Beats Per Minute — measures the tempo of music. A slow ballad might sit at 60–80 BPM, while EDM dance tracks often run at 128–140 BPM. The human resting heart rate is typically 60–100 BPM, which may be why music near that range often feels naturally comfortable. DJs use BPM to beatmatch tracks smoothly during a set.",
-  "Which country does reggae music originate from?": "Reggae originated in Jamaica in the late 1960s, evolving from earlier Jamaican styles like ska and rocksteady. Bob Marley is its most famous ambassador, bringing it to global audiences in the 1970s. In 2018, UNESCO inscribed reggae on its list of Intangible Cultural Heritage of Humanity, recognizing its role in social justice movements worldwide.",
-  "Who painted the Sistine Chapel ceiling?": "Michelangelo painted the Sistine Chapel ceiling between 1508 and 1512, completing the 500-square-meter work largely alone while lying on scaffolding. The ceiling features over 300 figures and nine scenes from Genesis, including the famous 'Creation of Adam.' Despite being primarily a sculptor, Michelangelo considered himself reluctant to take the commission — but produced one of the greatest artworks in history.",
-  "Who painted The Starry Night?": "Vincent van Gogh painted The Starry Night in June 1889 while voluntarily staying at an asylum in Saint-Rémy-de-Provence, France. He painted it from memory based on the view from his room window. Despite being one of the world's most recognized paintings, Van Gogh sold only one painting during his lifetime and died in poverty at 37.",
-  "Which art movement did Salvador Dali belong to?": "Salvador Dalí was one of Surrealism's most prominent figures, a movement founded in the 1920s that drew on dreamlike imagery and the unconscious mind. His 1931 painting The Persistence of Memory — featuring melting clocks draped over a barren landscape — is one of the most recognizable images in art history. Dalí was also a showman who cultivated a deliberately eccentric public persona.",
-  "The Louvre museum is located in which city?": "The Louvre in Paris is the world's most visited art museum, drawing around 9 million visitors a year. It began as a royal palace in the 12th century and became a public museum during the French Revolution in 1793. Its collection spans 35,000 years of history across 380,000 objects — but only about 35,000 are on display at any one time.",
-  "Who sculpted the statue of David?": "Michelangelo carved David between 1501 and 1504 from a single block of white Carrara marble that had already been partially worked — and partially ruined — by two previous sculptors. Standing 5.17 meters tall, the statue depicts the biblical hero David just before his battle with Goliath, and was intended as a symbol of the Florentine Republic's defiance of larger enemies.",
-  "What technique involves applying thick paint to a canvas?": "Impasto is the technique of applying paint so thickly that the brushstrokes or palette knife marks stand out in three dimensions. Van Gogh was a master of the technique — in The Starry Night, the paint is so thick it casts real shadows. The word comes from the Italian for 'dough' or 'paste,' evoking the dense, textured quality of the paint.",
-  "Which Japanese art form involves paper folding?": "Origami derives from the Japanese words 'oru' (to fold) and 'kami' (paper). While paper folding existed in China and Europe, the Japanese art form developed its own distinct tradition after paper became widely available in Japan around the 6th century CE. Today origami principles are used in aerospace engineering to fold solar panels that can be deployed in space.",
-  "Who painted the Mona Lisa?": "Leonardo da Vinci painted the Mona Lisa between approximately 1503 and 1519, and it is believed to depict Lisa Gherardini, the wife of a Florentine merchant. It is housed in the Louvre behind bulletproof glass after being stolen in 1911 (and recovered two years later). Its fame exploded in the 20th century — before then, it wasn't even considered Leonardo's greatest work.",
-  "Who directed the 1993 film Schindlers List?": "Steven Spielberg directed Schindler's List in 1993, filming it in black and white in Poland on the actual locations where events occurred. The film won seven Academy Awards including Best Picture and Best Director — Spielberg's first. He donated his entire director's fee to USC Shoah Foundation, which he subsequently established to record Holocaust survivor testimony.",
-  "Which film won the first Academy Award for Best Picture?": "Wings (1927), a World War I aerial combat film, won Best Picture at the first Academy Awards ceremony in 1929 — a 15-minute event held at the Hollywood Roosevelt Hotel. It remains the only silent film ever to win the top Oscar. The ceremony had no suspense: the winners had been announced three months before the event.",
-  "Who played Iron Man in the Marvel Cinematic Universe?": "Robert Downey Jr. played Tony Stark / Iron Man across 10 MCU films from 2008 to 2019. His casting was considered a gamble at the time due to his troubled personal history, but it launched one of the most successful film franchises in history. His final line in Avengers: Endgame — 'I am Iron Man' — is among the most celebrated moments in modern cinema.",
-  "Which TV show features the fictional paper company Dunder Mifflin?": "The Office (US version) aired on NBC from 2005 to 2013, based on Ricky Gervais's British original. Set at the fictional Dunder Mifflin Scranton branch, it pioneered the mockumentary format for American sitcoms. Despite modest ratings during its run, it became one of the most-streamed shows in history after moving to Netflix and Peacock.",
-  "What 1994 film features a character named Forrest Gump?": "Forrest Gump (1994), directed by Robert Zemeckis and starring Tom Hanks, follows a simple-minded but kind-hearted Alabama man who inadvertently influences several major historical events. The film won six Oscars including Best Picture, and its famous line — 'Life is like a box of chocolates' — became one of the most quoted in cinema history.",
-  "In which film does the line You cant handle the truth appear?": "The line is delivered by Jack Nicholson as Colonel Jessup in A Few Good Men (1992), directed by Rob Reiner. Nicholson improvised slight variations during filming; the version that made the final cut is actually 'You can't handle the truth!' — with an exclamation rather than the question mark it's often misquoted with. It's consistently ranked among the most memorable movie quotes ever.",
-  "Which actor played Hannibal Lecter in Silence of the Lambs?": "Anthony Hopkins played Dr. Hannibal Lecter in The Silence of the Lambs (1991), despite appearing on screen for only 16 minutes — one of the shortest performances ever to win the Academy Award for Best Actor. The film swept all five major Oscars, a feat only achieved by two other films: It Happened One Night and One Flew Over the Cuckoo's Nest.",
-  "What fictional country is Black Panther set in?": "Wakanda is a fictional East African nation in the Marvel universe, portrayed as the world's most technologically advanced country thanks to its vast deposits of vibranium — a fictional metal that absorbs and redirects energy. Black Panther (2018) grossed over $1.3 billion worldwide and became a cultural phenomenon, being the first superhero film nominated for the Academy Award for Best Picture.",
-  "Which country invented the sport of rugby?": "Rugby is said to have been born in 1823 at Rugby School in Warwickshire, England, when a student named William Webb Ellis picked up the ball during a football match and ran with it. The Rugby World Cup trophy is named the Webb Ellis Cup in his honor. The story may be apocryphal, but Rugby School embraced it — you can still see a plaque commemorating the moment on the school grounds.",
-  "How many players are on a standard soccer team on the field?": "Each soccer team fields 11 players, including one goalkeeper. The Laws of the Game specify that a match cannot start if either team has fewer than 7 players. The total of 22 players on a full-size pitch was not always standard — early Victorian-era football matches sometimes featured dozens of players per side.",
-  "Which country has won the most FIFA World Cups?": "Brazil has won the FIFA World Cup five times — 1958, 1962, 1970, 1994, and 2002 — more than any other nation. They are also the only team to have qualified for every single World Cup since the tournament began in 1930. The 1970 Brazilian squad, led by Pelé, is widely considered the greatest international football team ever assembled.",
-  "In tennis, what is the term for a score of 40-40?": "Deuce in tennis means both players are tied at 40-40. From deuce, a player must win two consecutive points to win the game — first winning 'advantage,' then the game point. The word 'deuce' likely derives from the French 'à deux' meaning 'to two,' referring to the two points needed to win. The unusual 15-30-40 scoring system dates to medieval France.",
-  "How many rings are on the Olympic flag?": "The Olympic flag features five interlocking rings in blue, yellow, black, green, and red on a white background — representing the five continents of the world united by the Olympic movement. The flag was designed by Pierre de Coubertin, founder of the modern Olympics, in 1913, and first flown at the 1920 Antwerp Games. At least one of the ring colors appears in every national flag in the world.",
-  "What sport is played at Wimbledon?": "Wimbledon is the oldest tennis tournament in the world, first held in 1877 at the All England Croquet and Lawn Tennis Club in London. It is one of the four Grand Slam tournaments and is unique for being played on grass courts. Players are still required to wear predominantly white clothing — a tradition dating back to Victorian-era notions of modesty and perspiration.",
-  "In basketball, how many points is a free throw worth?": "A free throw in basketball is worth 1 point and is awarded after certain fouls. Players shoot from the free-throw line, 4.57 meters from the basket. Despite being an uncontested shot, free throw percentages vary wildly — the best shooters make about 90%, while some elite players have career averages below 50%, a phenomenon sometimes called 'Hack-a-Shaq' when opponents deliberately foul poor shooters.",
-  "Which country hosted the 2016 Summer Olympics?": "Brazil hosted the 2016 Summer Olympics in Rio de Janeiro — the first Games ever held in South America. The event was overshadowed by concerns about the Zika virus, political instability, and polluted venues. But it also produced memorable moments, including Usain Bolt winning his third consecutive 100m and 200m Olympic titles and Michael Phelps ending his career as the most decorated Olympian of all time.",
-  "What is the main ingredient in guacamole?": "Avocados — the base of guacamole — are technically berries and are native to south-central Mexico, where the Aztecs called them 'ahuacatl.' They are unusual in that they ripen only after being picked from the tree. The tree itself can keep fruit on it for months, effectively acting as a living storage system. Avocados are one of the few fruits high in healthy monounsaturated fat rather than sugar.",
-  "Which country is credited with inventing pizza?": "Pizza as we know it originated in Naples, Italy, in the 18th–19th century, when locals began adding tomato to flatbreads. The Margherita — topped with tomato, mozzarella, and basil to represent the Italian flag — was reportedly created in 1889 for Queen Margherita of Savoy. Naples still fiercely guards the Neapolitan pizza tradition, which has UNESCO cultural heritage status.",
-  "What is the main grain used to make sake?": "Sake is a Japanese rice wine brewed through a fermentation process more similar to beer than wine. Special high-starch rice varieties are used, and the outer layer is polished away before brewing — the more that's polished off, the more refined the sake. Japan has been brewing sake for at least 2,000 years, and it plays a central role in Shinto religious ceremonies.",
-  "Which spice is derived from the Crocus flower?": "Saffron comes from the dried stigmas of the Crocus sativus flower — each flower produces just three stigmas, all harvested by hand. It takes around 150,000 flowers to produce a single kilogram of saffron, which is why it's the world's most expensive spice by weight. It's used to color and flavor dishes from Spanish paella to Milanese risotto to Persian rice.",
-  "What type of pastry is used to make a croissant?": "Croissants are made from puff pastry — specifically laminated dough, created by repeatedly folding butter into dough to create hundreds of paper-thin layers that puff up during baking. Despite being synonymous with France, the croissant likely originated in Vienna, Austria, modeled on the crescent-shaped 'kipferl.' French bakers adopted and refined it in the 19th century.",
-  "Which country produces the most coffee in the world?": "Brazil has been the world's largest coffee producer for over 150 years, accounting for roughly a third of global coffee production. The country's vast size, varied climate, and extensive agricultural infrastructure allow it to grow both arabica and robusta beans at enormous scale. Coffee was introduced to Brazil in the early 1700s and quickly became the backbone of its economy.",
-  "What is the Japanese word for raw fish served on rice?": "Sushi refers specifically to vinegared rice combined with various toppings or fillings — raw fish (sashimi) is just one option. Sushi originated in Southeast Asia as a method of preserving fish in fermented rice, with the modern Tokyo-style nigiri sushi (a hand-pressed rice ball topped with fish) developed in the early 19th century. It became a global phenomenon in the late 20th century.",
-  "Which nut is used to make marzipan?": "Marzipan is made from ground almonds, sugar, and sometimes egg whites. Its origins are debated — both Lübeck in Germany and Toledo in Spain claim to have invented it, as do various Middle Eastern cultures. The finest marzipan is still made in Lübeck, where by law it must contain at least 70% almonds. It is used in everything from wedding cakes to elaborate sculpted confections.",
-  "Which country is home to the kangaroo?": "Kangaroos are native to Australia and are found nowhere else in the wild. They are marsupials, meaning they carry their underdeveloped young (joeys) in a pouch after a very short gestation of about 33 days. A red kangaroo can leap 9 meters in a single bound and reach speeds of 56 km/h. There are more kangaroos in Australia than there are people — roughly twice as many.",
-  "What is the fastest land animal?": "The cheetah can reach speeds of up to 120 km/h in short bursts, accelerating from 0 to 100 km/h in about 3 seconds — faster than most sports cars. Unlike other big cats, cheetahs cannot roar; they purr instead. Their distinctive black 'tear marks' running from their eyes to their mouth reduce sun glare and help them focus on prey during daytime hunts.",
-  "How many hearts does an octopus have?": "Octopuses have three hearts: two branchial hearts pump blood through the gills, while a third systemic heart pumps oxygenated blood through the body. Their blood is blue because it uses copper-based hemocyanin rather than the iron-based hemoglobin that makes human blood red. Octopuses are also remarkably intelligent — they can solve puzzles, use tools, and even recognize individual human faces.",
-  "What is the largest living structure on Earth?": "The Great Barrier Reef stretches over 2,300 kilometers along Australia's northeast coast and is the world's largest living structure, visible from space. It is home to over 1,500 species of fish, 4,000 types of mollusc, and 600 species of coral. Since 2016, successive marine heatwaves have caused mass coral bleaching events that have damaged over half the reef.",
-  "Which animal has the longest lifespan?": "The Greenland shark is believed to be the longest-lived vertebrate on Earth, with scientists estimating lifespans of up to 500 years based on radiocarbon dating of their eye lenses. They grow just 1 centimeter per year, don't reach sexual maturity until around age 150, and live in the cold, deep waters of the North Atlantic and Arctic. They are almost entirely blind due to parasites on their eyes.",
-  "What percentage of Earth's water is fresh water?": "Only about 3% of Earth's water is freshwater — and of that, roughly 69% is locked in glaciers and ice caps, 30% is groundwater, and less than 1% is in rivers, lakes, and accessible surface water. That tiny fraction sustains virtually all terrestrial life. By 2025, the UN estimates that two-thirds of the world's population could face water-stressed conditions.",
-  "Which bird cannot fly but is an excellent swimmer?": "Penguins evolved their flippers from wings over millions of years, trading the ability to fly for extraordinary swimming ability — they can reach speeds of 36 km/h underwater and dive to depths of over 500 meters. Emperor penguins breed in Antarctica in temperatures as low as -60°C, with males incubating eggs on their feet through the polar winter for over two months without eating.",
-  "What is the world's largest rainforest?": "The Amazon rainforest covers over 5.5 million square kilometers across nine South American countries, with about 60% in Brazil. It produces roughly 20% of the world's oxygen and is home to an estimated 10% of all species on Earth. The Amazon River, which runs through it, discharges more water into the ocean than the next seven largest rivers combined.",
-  "Who co-founded Apple with Steve Jobs?": "Steve Wozniak designed the original Apple I and Apple II computers almost entirely by himself, while Jobs handled marketing and business. Wozniak was the engineering genius; Jobs was the visionary salesman. After leaving Apple, Wozniak donated much of his wealth to public school computer labs. He later said his favorite Apple product was the original Macintosh.",
-  "What does HTTP stand for?": "HyperText Transfer Protocol is the foundation of data communication on the World Wide Web, defining how messages are formatted and transmitted between browsers and servers. It was invented by Tim Berners-Lee at CERN in 1989, along with HTML and URLs. HTTPS (the 'S' is for Secure) encrypts the connection using TLS, which is why your browser shows a padlock icon on secure sites.",
-  "In what year was the first iPhone released?": "Steve Jobs unveiled the original iPhone on January 9, 2007, describing it as 'an iPod, a phone, and an internet communicator' in one device. It went on sale on June 29, 2007. The iPhone revolutionized the mobile industry, effectively killing the physical keyboard phone and transforming Apple from a computer company into the world's most valuable company.",
-  "What programming language was created by Guido van Rossum?": "Guido van Rossum created Python in the late 1980s and released it in 1991, naming it after Monty Python's Flying Circus rather than the snake. It was designed to be readable and beginner-friendly. Today Python is one of the world's most popular programming languages, powering everything from Instagram and YouTube to NASA's scientific computing and most modern AI and machine learning systems.",
-  "What does CPU stand for?": "The Central Processing Unit is the primary component of a computer that executes instructions — essentially the brain. Modern CPUs can perform billions of calculations per second and contain billions of transistors on a chip the size of a fingernail. Intel introduced the first commercial single-chip microprocessor, the 4004, in 1971; today's chips are millions of times more powerful.",
-  "Which company developed the Android operating system?": "Android was created by Android Inc., a small startup founded in 2003, which Google acquired in 2005 for around $50 million — one of the great bargains in tech history. Google released it as an open-source operating system in 2008. Android now powers about 72% of the world's smartphones, making it by far the most widely used mobile operating system on Earth.",
-  "What is the name of the world's first computer bug — a literal one?": "On September 9, 1947, engineers working on the Harvard Mark II computer at Harvard found a moth trapped in a relay, causing a malfunction. Grace Hopper's team taped it into the logbook with the note 'First actual case of bug being found.' The word 'bug' for a technical glitch had been used informally before, but this incident cemented it in computing culture forever."
-};
+  // Fetch explainer for each missed question individually via API
+  missedList.forEach((m,i) => fetchSingleExplainer(m, i));
+}
 
-  missedList.forEach((m,i)=>{
-    const el=$(`exp-${i}`);
-    if(el){
-      const exp = EXPLAINERS[m.question] || `The correct answer is "${m.correctAnswer}."`;
-      el.textContent = exp;
-      el.className = "missed-exp";
-    }
-  });
+
+async function fetchSingleExplainer(missed, idx) {
+  const el = $(`exp-${idx}`);
+  if (!el) return;
+  try {
+    const prompt = `Write 2-3 sentences of genuinely interesting educational context about this trivia question. Be specific and engaging — like a great encyclopedia entry. Question: "${missed.question}" Correct answer: "${missed.correctAnswer}". Return only the explanation text, no labels or preamble.`;
+    const text = await callClaude(prompt, 300);
+    el.textContent = text.trim();
+    el.className = "missed-exp";
+  } catch(e) {
+    el.textContent = `The correct answer is "${missed.correctAnswer}."`;
+    el.className = "missed-exp";
+  }
 }
 
 $("btn-start").onclick = () => {
@@ -3134,85 +3114,47 @@ async function acceptNotifications() {
   }
 }
 
+
+// ── iOS HOME SCREEN PROMPT ──
+function maybeShowIOSBanner() {
+  // Only on iOS Safari, not already in standalone mode, not already dismissed
+  const isIOS = /iphone|ipad|ipod/i.test(navigator.userAgent);
+  const isStandalone = window.navigator.standalone === true;
+  const isDismissed = localStorage.getItem('tnt_ios_banner_dismissed');
+
+  if (!isIOS || isStandalone || isDismissed) return;
+
+  // Show after a short delay so page loads first
+  setTimeout(() => {
+    if (document.getElementById('ios-banner')) return;
+    const banner = document.createElement('div');
+    banner.id = 'ios-banner';
+    banner.innerHTML = `
+      <div class="ios-banner-row">
+        <div class="ios-banner-icon">3</div>
+        <div class="ios-banner-text">
+          <div class="ios-banner-title">Add to Home Screen</div>
+          <div class="ios-banner-sub">Get daily reminders and the full app experience.</div>
+        </div>
+      </div>
+      <div class="ios-banner-steps">
+        1. Tap the <b>Share button</b> ⬆ at the bottom of Safari<br>
+        2. Scroll down and tap <b>Add to Home Screen</b><br>
+        3. Open the app from your home screen
+      </div>
+      <button class="ios-banner-dismiss" onclick="dismissIOSBanner()">Maybe later</button>
+    `;
+    document.body.appendChild(banner);
+  }, 4000);
+}
+
+function dismissIOSBanner() {
+  localStorage.setItem('tnt_ios_banner_dismissed', '1');
+  const b = document.getElementById('ios-banner');
+  if (b) b.style.transition = 'opacity .3s', b.style.opacity = '0', setTimeout(() => b.remove(), 300);
+}
+
+// Run on load
+maybeShowIOSBanner();
+
 </script>
-
-<!-- TUTORIAL OVERLAY -->
-<div id="tutorial-overlay" style="display:none;">
-  <div id="tutorial-card">
-    <div class="tut-rule"></div>
-    <div class="tut-title">How to Play</div>
-    <div class="tut-steps">
-      <div class="tut-step">
-        <div class="tut-icon">?</div>
-        <div class="tut-step-text">
-          <div class="tut-step-head">Answer questions</div>
-          <div class="tut-step-body">Tap an answer. Questions keep coming — no timer, no pressure.</div>
-        </div>
-      </div>
-      <div class="tut-step">
-        <div class="tut-icon">●●●</div>
-        <div class="tut-step-text">
-          <div class="tut-step-head">Three lives</div>
-          <div class="tut-step-body">Miss three and your session ends. The dots at the top track your lives.</div>
-        </div>
-      </div>
-      <div class="tut-step">
-        <div class="tut-icon">✦</div>
-        <div class="tut-step-text">
-          <div class="tut-step-head">Learn something new</div>
-          <div class="tut-step-body">When you're done, every missed question gets a short explanation — the three new things you're taking away.</div>
-        </div>
-      </div>
-    </div>
-    <button id="tut-btn">Got it — let's play</button>
-  </div>
-</div>
-
-
-<!-- LEADERBOARD PAGE -->
-<div class="page" id="pg-leaderboard">
-  <div style="padding:0 26px 64px;">
-    <div style="padding:24px 0 16px;border-bottom:1px solid #ddd6c8;margin-bottom:24px;display:flex;align-items:baseline;justify-content:space-between;">
-      <div>
-        <div style="font-family:'IBM Plex Mono',monospace;font-size:8.5px;letter-spacing:.32em;color:#a89e8e;text-transform:uppercase;margin-bottom:6px;">This Week</div>
-        <div style="font-family:'Playfair Display',Georgia,serif;font-size:28px;font-weight:700;color:#2a2520;">Leaderboard</div>
-      </div>
-      <button id="lb-back-btn" onclick="showPage(lbReturnPage||'pg-results')" style="background:transparent;border:none;font-family:'IBM Plex Mono',monospace;font-size:9px;letter-spacing:.2em;color:#a89e8e;text-transform:uppercase;cursor:pointer;padding:8px 0;">← Back</button>
-    </div>
-    <div style="font-family:'IBM Plex Mono',monospace;font-size:8.5px;letter-spacing:.2em;color:#a89e8e;text-transform:uppercase;margin-bottom:14px;">Ranked by weekly correct answers</div>
-    <div id="lb-list"><div class="lb-loading">Loading…</div></div>
-    <div style="margin-top:24px;padding-top:16px;border-top:1px solid #ddd6c8;">
-      <div id="lb-your-rank" style="font-family:'IBM Plex Mono',monospace;font-size:9px;letter-spacing:.15em;color:#a89e8e;text-align:center;"></div>
-    </div>
-  </div>
-</div>
-
-
-<!-- CROSSWORD PAGE -->
-<div class="page" id="pg-crossword">
-  <div id="cw-content">
-    <!-- Filled dynamically -->
-  </div>
-  <input id="cw-input" type="text" autocomplete="off" autocorrect="off" autocapitalize="characters" spellcheck="false"/>
-</div>
-
-
-<!-- DEBUG PANEL -->
-<div id="debug-panel">
-  <div id="debug-menu">
-    <div class="debug-title">🛠 Dev Tools</div>
-    <button class="debug-btn" onclick="debugSimulateDay(1)">Simulate Monday</button>
-    <button class="debug-btn" onclick="debugSimulateDay(2)">Simulate Tuesday</button>
-    <button class="debug-btn" onclick="debugSimulateDay(3)">Simulate Wednesday</button>
-    <button class="debug-btn" onclick="debugSimulateDay(4)">Simulate Thursday</button>
-    <button class="debug-btn" onclick="debugSimulateDay(5)">Simulate Friday</button>
-    <button class="debug-btn" onclick="debugSimulateDay(6)">Simulate Saturday</button>
-    <button class="debug-btn" onclick="debugTriggerSunday()">→ Trigger Sunday Crossword</button>
-    <button class="debug-btn" onclick="debugShowLeaderboard()">View Leaderboard</button>
-    <button class="debug-btn danger" onclick="debugClearAll()">Clear All Data</button>
-  </div>
-  <button id="debug-toggle" onclick="document.getElementById('debug-menu').classList.toggle('open')">🛠</button>
-</div>
-
-</body>
-</html>
